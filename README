@@ -1,0 +1,8 @@
+How to install:
+
+1. Prepare runtime - you can use simple tomcat server or SAP Java Web Tomcat 7 runtime - download at: https://tools.hana.ondemand.com
+2. Download Eclipse Java EE edition
+3. Install SAP Java Web Tomcat 7 tools - update site can be found again on: https://tools.hana.ondemand.com (install only tools for java)
+4. Import projects into eclipse
+
+Next you can run the application locally or in the cloud. You can use a free hanatrial account from: https://hanatrial.ondemand.com
