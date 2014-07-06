@@ -1,7 +1,6 @@
 package exposed;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,13 +10,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.http.HttpRequest;
-
-import rest.wrappers.SessionBasic;
 import rest.wrappers.EventWrapped;
+import rest.wrappers.SessionBasic;
 import util.DBUtils;
-import entities.Session;
 import entities.LoggedUser;
+import entities.Session;
 
 public class SessionExposedBasic {
 

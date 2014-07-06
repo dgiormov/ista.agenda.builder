@@ -4,8 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="lib/eclipselink.jar"/>
 	<classpathentry kind="lib" path="lib/javax.persistence_2.0.3.v201010191057.jar"/>
-	<classpathentry kind="lib" path="/abuilder/WebContent/WEB-INF/lib/com.sap.core.jdbc.remoteaccess.client-0.0.5-full.jar"/>
-	<classpathentry kind="lib" path="/abuilder/WebContent/WEB-INF/lib/com.sap.core.jdbc.remoteaccess.server.jar-0.0.5-full.jar"/>
 	<classpathentry kind="lib" path="/abuilder/WebContent/WEB-INF/lib/commons-fileupload-1.2.2.jar"/>
 	<classpathentry kind="lib" path="/abuilder/WebContent/WEB-INF/lib/commons-io-2.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/com.sap.core.javaweb.tomcat.classpath/Java Web Tomcat 7">

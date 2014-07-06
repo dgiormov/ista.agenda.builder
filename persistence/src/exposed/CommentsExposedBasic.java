@@ -1,24 +1,14 @@
 package exposed;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.http.HttpRequest;
 
 import rest.wrappers.CommentBasic;
-import rest.wrappers.SessionBasic;
 import util.DBUtils;
 import entities.Comment;
-import entities.Session;
-import entities.LoggedUser;
 
 public class CommentsExposedBasic {
 
