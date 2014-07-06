@@ -71,25 +71,6 @@
     <servlet-name>InitDatabase</servlet-name>
     <url-pattern>/admin/db</url-pattern>
   </servlet-mapping>
-  <servlet>
-    <description></description>
-    <display-name>RemotingServlet</display-name>
-    <servlet-name>RemotingServlet</servlet-name>
-    <servlet-class>com.sap.core.jdbc.remoteaccess.server.RemotingServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>RemotingServlet</servlet-name>
-    <url-pattern>/RemotingServlet/*</url-pattern>
-  </servlet-mapping>
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>Protected Tunnel</web-resource-name>
-      <url-pattern>/RemotingServlet/*</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>jdbc_remote_access_admin</role-name>
-    </auth-constraint>
-  </security-constraint>
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>Admin panel</web-resource-name>
