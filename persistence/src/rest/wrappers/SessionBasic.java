@@ -2,10 +2,13 @@ package rest.wrappers;
 
 import java.util.List;
 
-import entities.Event;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import entities.Session;
 import entities.Speaker;
 
-public class EventBasic {
+@XmlRootElement
+public class SessionBasic {
 
 	private int id;
 	public int getId() {
@@ -23,7 +26,7 @@ public class EventBasic {
 	private int duration;
 	private boolean isSelected;
 
-	public EventBasic(Event e) {
+	public SessionBasic(Session e) {
 		id = e.getId();
 		setName(e.getName());
 		speakers = e.getSpeakers();

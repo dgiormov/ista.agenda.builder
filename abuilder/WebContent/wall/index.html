@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<html style="height: 100%;">
+<head>
+<script src="../js/jquery-1.9.1.min.js"></script>
+</head>
+<body style="height: 80%%; background-repeat:no-repeat;background-position:center;background-size:100% auto;">
+
+<script> 
+var index = 0;
+var ranking = [];
+function test() {
+	var body=document.getElementsByTagName('body')[0];
+  if (index == 0){
+	  generateTable(ranking);
+	body.style.backgroundImage='url(background.jpg)';
+	
+  } else if (index == 1){
+    document.getElementById("switch").innerHTML="d-code program";
+	body.style.backgroundImage='url(program.jpg)';
+	/* $('#switch').html('<img alt="" style="width:100%; height:100%;" src="program.jpg">'); */
+	$('#switch').html('');
+	//body.style.backgroundImage='';
+ } else {
+	 body.style.backgroundImage='url(full_hd.jpg)';
+	 /* body.style.backgroundImage='url(full_hd.jpg)'; */
+	 /* $('#switch').html('<img alt="" style="width:100%; height:100%;" src="full_hd.jpg">'); */
+	 $('#switch').html('');
+ }
+  index++;
+  if(index > 2){
+	  index = 0;
+  }
+}
+
+function setRanking(r){
+	ranking = r;
+}
+
+function getRanking(){
+	$.get("../rest/ranking/").success(function(data){
+		  setRanking(data.ranking);
+		   /* test(); */
+		});
+}
+getRanking();
+
+var interval = setInterval(test, 10000); 
+
+var interval2 = setInterval(getRanking, 60000); 
+
+function generateTable(data){
+	var result = '<table rules = "rows" style="width:60%; height:80%; margin-left: auto; margin-right: auto; margin-top: 130px;">';
+	var firstColor = 'color: red;';
+	for(var i=0; i<10;i++){
+		if(typeof data[i] ==='undefined'){
+			break;
+		}
+		if(i==0){
+			firstColor = 'color: red;';
+		} else {
+			firstColor = '';
+		}
+		result+='<tr style="font-size:22px; '+firstColor+'">';
+		result+='<td width=20%><center><b>'+data[i].position+'</b></center></td>';
+		result+='<td width=70%><h3 style="padding-left:20px;">'+data[i].name+'</h3></td>'
+		result+='<td width=10%><b>'+data[i].points+'</b></td></tr>';
+	}
+	result+='</table>';
+	$('#switch').html(result);
+}
+
+
+</script>
+
+<div id="switch">
+</div>
+
+
+</body>
+</html>

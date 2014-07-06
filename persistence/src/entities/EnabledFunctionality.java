@@ -14,7 +14,6 @@ public class EnabledFunctionality {
 	
 	private boolean isEnabled;
 	
-	
 	public boolean isEnabled() {
 		return isEnabled;
 	}

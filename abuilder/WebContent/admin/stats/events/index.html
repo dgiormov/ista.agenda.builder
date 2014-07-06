@@ -1,0 +1,84 @@
+<html>
+<head>
+	<script src="../../../js/jquery-1.9.1.min.js"></script>
+  	<link id="ext_css" rel="stylesheet" type="text/css" href="../css/eventstats.css"/>
+</head>
+<title>Event Details</title>
+<body>
+	<div id="wrapper">		
+		<div id="col1">
+			<h3>Users</h3>
+			<div id="a1">
+			</div>
+			<div  id="a2">
+			</div>
+			<div  id="a3">
+			</div>
+		</div>
+		<div id="col2">
+		<h3>Favorite Sessions</h3>
+			<div id="b1">
+			</div>
+			<div id="b2">
+			</div>
+			<div id="b3">
+			</div>		
+		</div>
+		<div id="col3">
+		<h3>Favorite Tracks</h3>
+			<div id="c1">
+			</div>
+			<div id="c2">
+			</div>
+			<div id="c3">
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	
+		$.get("/ViewStats", {event_details : 1})
+				.done(
+						function(data) {
+							var eobData = JSON.parse(data);
+							var userData = "All users: "
+									+ eobData.allRegistrations + "<br/>";
+							userData += "Active users: "
+									+ eobData.countOfActiveUsers + "<br/>";
+							userData += "Inactive users: "
+									+ eobData.countOfInactiveUsers + "<br/>";
+							$("#a1").html(userData);
+							$("#a2").html(
+									"Booked sessions: "
+											+ eobData.allBookedSessions);
+							$("#a3").html(
+									"Averege sessions per user: "
+											+ eobData.average);
+							var mostBooked = eobData.mostBookedSessions;
+							var mBookedS = ""
+							for (i = 0; i < mostBooked.length; i++) {
+								mBookedS += (i + 1) + ": " + mostBooked[i].name;
+								var speakers = "";
+								if (typeof mostBooked[i].speakers != 'undefined') {
+									speakers = '<br/><div style="margin-left: 0.7em; font-size:13px; color:#aaa;">'
+											+ mostBooked[i].speakers + '</div>';
+								}
+								mBookedS += " (" + mostBooked[i].bookings + ")";
+								mBookedS += speakers+"<br/>";
+							}
+							$("#b1").html(mBookedS);
+
+							var mostBookedTrack = eobData.mostBookedTracks;
+							var ii = 0;
+							var bTrack = ""
+							for (ii = 0; ii < mostBookedTrack.length; ii++) {
+								bTrack += (ii + 1) + ": "
+										+ mostBookedTrack[ii].name;
+								bTrack += " (" + mostBookedTrack[ii].bookings
+										+ ") <br/>";
+							}
+							$("#c1").html(bTrack);
+
+						});
+	</script>
+</body>
+</html>

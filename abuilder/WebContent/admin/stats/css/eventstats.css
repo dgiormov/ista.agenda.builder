@@ -1,0 +1,135 @@
+body {
+	padding:20px;
+	background: #f5f5f5;
+	font-family: "Lucida Grande", Helvetica, Arial,sans-serif;
+	color: #2b2b2b;
+}
+
+#wrapper {
+	width:70%;
+	margin: 0 auto;
+	background: #fff;
+	min-height: 200px;
+	border: 1px solid #eee;
+	-moz-border-radius: 13px;
+	border-radius: 13px;
+	box-shadow: 2px 2px 6px #ddd;
+	-moz-box-shadow: 2px 2px 4px #ddd;
+	padding: 20px;
+	display: table;
+}
+
+#col1 {
+	width:33%;
+	float:left;
+	border-right: 1px solid #eee;
+	min-height: 504px;
+	display: table-cell;
+}
+
+#col2 {
+	width:33%;
+	float:left;
+	border-right: 1px solid #eee;
+	min-height: 504px;
+	display: table-cell;
+}
+
+#col3 {
+	width:33%;
+	float:right;
+	min-height: 504px;
+	display: table-cell;
+}
+
+#col1 div, #col2 div, #col3 div {
+	padding: 10px;
+	margin: 0 auto;
+}
+
+.personid {
+	width: 100px;
+	text-align: center;
+}
+
+li {
+	margin-left:2em;
+}
+
+#personid img {
+	width: 100px;
+	height: 130px;
+    -moz-border-radius: 5px;
+     -webkit-border-radius: 5px;
+}
+
+/*-------menu-------*/
+
+#menu {
+	margin: 0 auto;
+	width: 300px;
+}
+
+table {
+	width: 300px;
+	margin: 0;
+	border: 0;
+	border-collapse: collapse;
+}
+
+table td {
+	width: 150px;
+	height: 150px;
+}
+
+#about {
+	background: url(pae-circular-menu1-aboutus.png) no-repeat;
+	background-size:150px 150px;
+}
+
+#fun {
+	background: url(pae-circular-menu1-fun.png) no-repeat;
+	background-size:150px 150px;
+}
+
+#ratings {
+	background: url(pae-circular-menu1-ratings.png) no-repeat;
+	background-size:150px 150px;
+}
+
+#fullstats {
+	background: url(pae-circular-menu1-fullstats.png) no-repeat;
+	background-size:150px 150px;
+}
+
+#about:hover {
+	background: url(pae-circular-menu1-aboutus-hover.png) no-repeat;
+	background-size:150px 150px;
+}
+
+#fun:hover {
+	background: url(pae-circular-menu1-fun-hover.png) no-repeat;
+	background-size:150px 150px;
+}
+
+#ratings:hover {
+	background: url(pae-circular-menu1-ratings-hover.png) no-repeat;
+	background-size:150px 150px;
+}
+
+#fullstats:hover {
+	background: url(pae-circular-menu1-fullstats-hover.png) no-repeat;
+	background-size:150px 150px;
+}
+.speakers{
+	width: 19% !important;
+}
+.charts{
+	width: 40% !important;
+}
+.chartss{
+	width: 5% !important;
+}
+.chartsl{
+	width: 89% !important;
+}

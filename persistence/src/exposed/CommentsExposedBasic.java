@@ -14,10 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.http.HttpRequest;
 
 import rest.wrappers.CommentBasic;
-import rest.wrappers.EventBasic;
+import rest.wrappers.SessionBasic;
 import util.DBUtils;
 import entities.Comment;
-import entities.Event;
+import entities.Session;
 import entities.LoggedUser;
 
 public class CommentsExposedBasic {

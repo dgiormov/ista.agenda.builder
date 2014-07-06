@@ -1,9 +1,11 @@
 package game;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import entities.LoggedUser;
+import entities.Points;
 
 public class Player implements Comparable<Player> {
 
@@ -15,11 +17,11 @@ public class Player implements Comparable<Player> {
 	public Player(LoggedUser p) {
 		id = p.getId()+42;
 		name = p.getName();
-		Map<Integer, Float> map = p.getPoints();
-		Set<Integer> keySet = map.keySet();
-		for (Integer integer : keySet) {
-			points += map.get(integer);
+		List<Points> allpoints = p.getPoints();
+		for (Points point : allpoints) {
+			points += point.getType().getPoints();
 		}
+			
 	}
 
 	public long getPoints() {

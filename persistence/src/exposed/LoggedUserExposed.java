@@ -10,7 +10,7 @@ import javax.persistence.Query;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import util.Constant;
+import util.Constants;
 import util.DBUtils;
 
 import com.sap.security.um.service.UserManagementAccessor;
@@ -50,22 +50,6 @@ public class LoggedUserExposed {
 
 	public void updateEntity(LoggedUser e) {
 		createEntity(e);
-	}
-
-	public void incTweetCounter(LoggedUser e) {
-		e.setTweetsCount(e.getTweetsCount() + 1);
-		updateEntity(e);
-	}
-
-	public void incTweetPhotoCounter(LoggedUser e) {
-		e.setTweetsCount(e.getTweetsCount() + 1);
-		e.setTweetPhotoCount(e.getTweetPhotoCount() + 1);
-		updateEntity(e);
-	}
-
-	public void incOpenMapCounter(LoggedUser e) {
-		e.setOpenMapCount(e.getOpenMapCount() + 1);
-		updateEntity(e);
 	}
 
 	public LoggedUser findPersonById(String id) {
@@ -149,7 +133,7 @@ public class LoggedUserExposed {
 			return null;
 		} else {
 			for (Cookie cookie : cookies) {
-				if (Constant.COOKIE_NAME.equals(cookie.getName())) {
+				if (Constants.COOKIE_NAME.equals(cookie.getName())) {
 					id = cookie.getValue();
 					break;
 				}

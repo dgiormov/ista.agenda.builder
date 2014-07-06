@@ -1,0 +1,75 @@
+body {
+	padding:20px;
+	background: #f5f5f5;
+}
+
+#menu {
+	margin: 0 auto;
+	width: 600px;
+}
+
+table {
+	width: 600px;
+	margin: 0;
+	border: 0;
+	border-collapse: collapse;
+}
+
+table td {
+	width: 300px;
+	height: 300px;
+}
+
+#about {
+	background: url(../images/pae-circular-menu-aboutus.png) no-repeat;
+	background-size:300px 300px;
+}
+
+#fun {
+	background: url(../images/pae-circular-menu-fun.png) no-repeat;
+	background-size:300px 300px;
+}
+
+#ratings {
+	background: url(../images/pae-circular-menu-ratings.png) no-repeat;
+	background-size:300px 300px;
+}
+
+#eventstats {
+	background: url(../images/pae-circular-menu-eventstats.png) no-repeat;
+	background-size:300px 300px;
+}
+
+#about:hover {
+	background: url(../images/pae-circular-menu-aboutus-hover.png) no-repeat;
+	background-size:300px 300px;
+}
+
+#fun:hover {
+	background: url(../images/pae-circular-menu-fun-hover.png) no-repeat;
+	background-size:300px 300px;
+}
+
+#ratings:hover {
+	background: url(../images/pae-circular-menu-ratings-hover.png) no-repeat;
+	background-size:300px 300px;
+}
+
+#eventstats:hover {
+	background: url(../images/pae-circular-menu-eventstats-hover.png) no-repeat;
+	background-size:300px 300px;
+}
+
+#menu table a {
+	display: block;
+	text-decoration: none;
+		display: block;
+		width: 300px;
+		height: 300px;
+		margin: 0;
+		pading: 0;
+}
+
+#menu table a:hover {
+	cursor: hand;
+}

@@ -25,7 +25,7 @@ public class Comment {
 	private int inReplyTo;
 	
 	@OneToOne
-	private Event event;
+	private Session event;
 	
 	private LoggedUser cowner;
 	
@@ -63,11 +63,11 @@ public class Comment {
 		this.cowner = cowner;
 	}
 
-	public Event getEvent() {
+	public Session getEvent() {
 		return event;
 	}
 
-	public void setEvent(Event event) {
+	public void setEvent(Session event) {
 		this.event = event;
 	}
 

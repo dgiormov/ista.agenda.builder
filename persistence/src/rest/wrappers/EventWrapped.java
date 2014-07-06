@@ -2,7 +2,7 @@ package rest.wrappers;
 
 import java.util.List;
 
-import entities.Event;
+import entities.Session;
 import entities.Speaker;
 import entities.LoggedUser;
 
@@ -21,7 +21,7 @@ public class EventWrapped {
 	private String description;
 	private boolean hasSecret;
 
-	public EventWrapped(Event e, LoggedUser p) {
+	public EventWrapped(Session e, LoggedUser p) {
 		id = e.getId();
 		name = e.getName();
 		speakers = e.getSpeakers();

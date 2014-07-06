@@ -62,7 +62,10 @@ public class LoggedUser implements Serializable {
 	private int strikes = 10;
 
 	@OneToMany
-	private List<Event> sessions = new ArrayList<Event>();
+	private List<Session> sessions = new ArrayList<Session>();
+	
+	@OneToMany(mappedBy="owner")
+	private List<Points> points = new ArrayList<Points>();
 	
 	@OneToOne(mappedBy="enteredBy")
 	private Code puzzlePiece;
@@ -86,15 +89,8 @@ public class LoggedUser implements Serializable {
 	private Map<Integer, String> viktorina = new HashMap<Integer, String>();
 	
 	@ElementCollection
-	private Map<Integer, Float> points = new HashMap<Integer, Float>();
-	
-	@ElementCollection
 	private Map<Integer, Long> bookedWhen = new HashMap<Integer, Long>();
 	
-	private long tweetsCount = 0;
-	private long tweetPhotoCount = 0;
-	private long openMapCount = 0;
-
 	private static final long serialVersionUID = 1L;
 
 	@Index
@@ -112,7 +108,7 @@ public class LoggedUser implements Serializable {
 		return this.id;
 	}
 
-	public List<Event> getSessions() {
+	public List<Session> getSessions() {
 		return sessions;
 	}
 
@@ -152,30 +148,6 @@ public class LoggedUser implements Serializable {
 		this.platform = platform;
 	}
 
-	public long getTweetsCount() {
-		return tweetsCount;
-	}
-
-	public void setTweetsCount(long tweetsCount) {
-		this.tweetsCount = tweetsCount;
-	}
-
-	public long getTweetPhotoCount() {
-		return tweetPhotoCount;
-	}
-
-	public void setTweetPhotoCount(long tweetPhotoCount) {
-		this.tweetPhotoCount = tweetPhotoCount;
-	}
-
-	public long getOpenMapCount() {
-		return openMapCount;
-	}
-
-	public void setOpenMapCount(long openMapCount) {
-		this.openMapCount = openMapCount;
-	}
-
 	public boolean isActive() {
 		return getEventRatings() != null && getEventRatings().size() > 0
 				|| getSessions() != null && getSessions().size() > 1;
@@ -204,7 +176,6 @@ public class LoggedUser implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
-		getPoints().put(ScoreCategories.LOGIN, Score.LOGIN);
 	}
 
 	public void setUserName(String userName) {
@@ -243,19 +214,6 @@ public class LoggedUser implements Serializable {
 		return getName() != null;
 	}
 	
-	public void addPoints(int type, float lpoints){
-		if(type > 1000 || type ==ScoreCategories.LIKED_BY5){
-			Float currentResult = points.get(type);
-			if(currentResult == null){
-				currentResult = 0f;
-			}
-			currentResult += lpoints;
-			points.put(type, currentResult);
-		} else {
-			points.put(type, lpoints);
-		}
-	}
-	
 	public Status addCode(Code code){
 		if(code.isUsed()){
 			return new Status(STATE.ERROR, "This code has been used.");
@@ -277,7 +235,8 @@ public class LoggedUser implements Serializable {
 		if(!getCodes().contains(code)){
 			getCodes().add(code);	
 		}
-		addPoints(code.getGid(), code.getPoints());
+		//FIXME points
+//		addPoints(code.getGid(), code.getPoints());
 		return new Status(STATE.OK, code.getPoints()); 
 	}
 
@@ -293,7 +252,7 @@ public class LoggedUser implements Serializable {
 		return result;
 	}
 
-	public Map<Integer, Float> getPoints() {
+	public List<Points> getPoints() {
 		return points;
 	}
 
@@ -304,11 +263,12 @@ public class LoggedUser implements Serializable {
 		
 	}
 
-	public void addToAgenda(Event event) {
+	public void addToAgenda(Session event) {
 		if(!getSessions().contains(event)){
 			getSessions().add(event);
 			if(getSessions().size() > 4){
-				addPoints(ScoreCategories.PROGRAM_PREPARED, Score.AGENDA);	
+				//FIXME add points
+//				addPoints(ScoreCategories.PROGRAM_PREPARED, Score.AGENDA);	
 			}
 		}
 	}
@@ -364,22 +324,6 @@ public class LoggedUser implements Serializable {
 
 	public List<Code> getCodes() {
 		return codes;
-	}
-
-	public void removePoints(int type, float lpoints) {
-		if(type > 1000){
-			Float currentResult = points.get(type);
-			if(currentResult == null){
-				currentResult = 0f;
-			}
-			currentResult -= lpoints;
-			if(currentResult>=0){
-				points.put(type, currentResult);	
-			}
-		} else {
-			points.put(type, lpoints);
-		}
-		
 	}
 
 	public Map<Integer, String> getViktorina() {

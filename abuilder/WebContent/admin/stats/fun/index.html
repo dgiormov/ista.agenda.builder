@@ -1,0 +1,87 @@
+<html>
+<head>
+	<link id="ext_css" rel="stylesheet" type="text/css" href="../css/eventstats.css"/>
+ <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script src="../../../js/jquery-1.9.1.min.js"></script>
+   <script type="text/javascript">
+   google.load("visualization", "1", {packages:["corechart"]});
+  </script>
+</head>
+<title>Fun facts</title>
+<body>
+	<div id="wrapper">		
+		<div id="col1" class="speakers">
+			<div id="a1" class="personid">
+			</div>
+			<div id="a2" class="personid">
+			</div>
+			<div id="a3" class="personid">
+			</div>
+		</div>
+		<div id="col2" class="charts">
+			<div id="b1">
+			</div>
+			<div id="b2">
+			<a href="map.html"> Enlarge </a>
+			</div>		
+		</div>
+		<div id="col3" class="charts">
+			<div id="c1">
+			</div>
+			<div id="c2">
+			<a href="../platform/"> Mobile Platform Statistics </a>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		 $.get("/ViewStats", { most_lost:  1}).done(function(data) {
+	    	  var allData = [];
+	    	  allData[0] = ["Less/More map usage", "count"];
+	    	  var ar = eval(data);
+	    	  allData[1] = ["More", ar[0]];
+	    	  allData[2] = ["Less", ar[1]];
+	    	  var data1 = google.visualization.arrayToDataTable(allData);
+	    	  drawChart2(data1);
+	      });
+		 $.get("/ViewStats", { mobile_wars:  1, active:  1}).done(function(data) {
+	    	  var allData = [];
+	    	  allData[0] = ["OS", "Users"];
+	    	  var eobData = eval(data);
+	    	  
+	    	  for(i=0; i< eobData.length; i++){
+	    		  allData[i+1] = [eobData[i].platformName, eobData[i].users];
+	    	  }
+	    	  var data1 = google.visualization.arrayToDataTable(allData);
+	    	  drawChart(data1);
+	      });
+	 function drawChart(data) {
+   	  
+         var options = {
+           title: 'iOS Vs Android'
+         };
+
+         var chart = new google.visualization.PieChart(document.getElementById('c1'));
+         chart.draw(data, options);
+      }
+	 function drawChart2(data) {
+	   	  
+         var options = {
+           title: 'Less / More map usage'
+         };
+
+         var chart = new google.visualization.PieChart(document.getElementById('b1'));
+         chart.draw(data, options);
+      }
+	$.get("/ViewStats", { picture_views:  1}).done(function(data) {
+	  	  var eobData = JSON.parse(data);
+	  	for(i=0; i< eobData.length; i++){
+	  	  var image1 = '<img alt="" src="../../../images/speakers/'+eobData[i].id+'.jpg" /><br/>'+eobData[i].name + " ("+eobData[i].clickedUpon+")";
+	  	  $("#a"+(i+1)).html(image1);
+	  	}
+	  	$("#a1").show("slow");
+		$("#a2").show("slow");
+		$("#a3").show("slow");
+	    });
+	</script>
+</body>
+</html>

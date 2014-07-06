@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="/jquery-1.9.1.min.js"></script>
+    <title>Map usage</title>
+   <script type="text/javascript">
+   google.load("visualization", "1", {packages:["corechart"]});
+	  /* google.setOnLoadCallback(drawChart); */
+     $.get("/ViewStats", { most_lost:  1}).done(function(data) {
+	    	  var allData = [];
+	    	  allData[0] = ["Less/More map usage", "count"];
+	    	  var ar = eval(data);
+	    	  allData[1] = ["More", ar[0]];
+	    	  allData[2] = ["Less", ar[1]];
+	    	  var data1 = google.visualization.arrayToDataTable(allData);
+	    	  drawChart2(data1);
+	      });
+      
+     function drawChart2(data) {
+	   	  
+         var options = {
+           title: 'Less / More map usage'
+         };
+
+         var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+         chart.draw(data, options);
+      }
+      
+      
+    </script>
+  </head>
+  <body>
+    <div id="chart_div" style="width: 900px; height: 500px;"></div>
+     
+  </body>
+</html>

@@ -1,0 +1,76 @@
+<html>
+<head>
+<script src="../../../js/jquery-1.9.1.min.js"></script>
+  	<link id="ext_css" rel="stylesheet" type="text/css" href="../css/eventstats.css"/>
+</head>
+<title>Ratings</title>
+<body>
+<div id="header" style="margin-bottom:2em;text-align:center;">
+<span><b>User rating:</b></span>
+			<span id="h1"></span>
+			<span id="h2"></span>
+			<span id="h3"></span>
+			</div>
+	<div id="wrapper">		
+		<div id="col1">
+		<h3>Highest Rated Speakers</h3>
+		<h5>(more than 5 votes required)</h5>
+			<div id="a1"></div>
+			<div  id="a2"></div>
+			<div  id="a3"></div>
+		</div>
+		<div id="col2">
+		<h3>Highest Rated Sessions</h3>
+		<h5>(more than 5 votes required)</h5>
+			<div id="b1">
+			</div>
+			<div id="b2">
+			</div>
+			<div id="b3">
+			</div>		
+		</div>
+		<div id="col3">
+			<div id="c1">
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	$.get("/ViewStats", { rated_sessions_json:  1}).done(function(data) {
+  	  var eobData = JSON.parse(data);
+  	  $("#h1").html("<i>Users rated at least 1 session: </i><b>"+ eobData.pplRated+"</b>");
+  	  $("#h2").html("<i>Total Ratings: </i><b>"+ eobData.allRatings+"</b>");
+  	  $("#h3").html("<i>Average ratings per person: </i><b>"+ eobData.averageRatings+"</b>");
+  	  var mostBooked = eobData.entriesSortedByValues;
+  	  var name = "";
+  	  for(i=0; i< mostBooked.length; i++){
+  		name += (i+1)+": "+ mostBooked[i].name;
+  		var speakers = "";
+  		if(typeof mostBooked[i].speakers != 'undefined'){
+  			speakers ='<br/><div style="margin-left: 0.7em; font-size:13px; color:#aaa;">' + mostBooked[i].speakers+'</div>';
+  		}
+  		name+=" ("+(Math.round(mostBooked[i].bookings*100)/100)+")";
+  		name+=" voted: "+mostBooked[i].additionalInfo +"<br/>";
+  		name+=speakers;
+	  }
+  	  var hSpeakers = eobData.speakersSortedByValues;
+	  var speakerNames = "";
+	  /* for(j=0; j< hSpeakers.length; j++){
+		  var speakers = "";
+		  speakerNames += (j+1)+": ";
+			if(typeof hSpeakers[j].speakers != 'undefined'){
+				speakers = hSpeakers[j].speakers;
+			} else {
+				speakers = "none";
+			}
+			speakerNames+=speakers;
+			speakerNames+=" ("+(Math.round(hSpeakers[j].bookings*100)/100)+")";
+			speakerNames+=" voted: "+hSpeakers[j].additionalInfo;
+			speakerNames += '<br/><div style="margin-left: 0.7em; font-size:13px; color:#aaa;">'+ hSpeakers[j].name+'</div>';
+	  }
+	  $("#a1").html(speakerNames); */
+  	$("#b1").html(name);
+  	$("#c1").html('<h1 style="margin-left: 0.7em; font-size:48px;">'+(Math.round(eobData.avRating*100)/100)+"</h1>");
+    });
+</script>
+</body>
+</html>

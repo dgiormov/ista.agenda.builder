@@ -20,9 +20,9 @@ import javax.persistence.Transient;
  */
 @Entity
 @NamedQueries({
-		@NamedQuery(name = "allEventsSQL", query = "SELECT e FROM Event e"),
-		@NamedQuery(name = "getEventById", query = "SELECT e FROM Event e WHERE e.id = :id") })
-public class Event implements Serializable {
+		@NamedQuery(name = "allEventsSQL", query = "SELECT e FROM Session e"),
+		@NamedQuery(name = "getEventById", query = "SELECT e FROM Session e WHERE e.id = :id") })
+public class Session implements Serializable {
 
 	@Override
 	public String toString() {
@@ -71,7 +71,7 @@ public class Event implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	public Event() {
+	public Session() {
 		super();
 	}
 
@@ -178,8 +178,8 @@ public class Event implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (Event.class.isInstance(obj)) {
-			Event newEvent = (Event) obj;
+		if (Session.class.isInstance(obj)) {
+			Session newEvent = (Session) obj;
 			return getId() == newEvent.getId();
 		}
 		return super.equals(obj);
