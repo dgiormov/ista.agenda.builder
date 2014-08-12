@@ -14,15 +14,15 @@
     <url-pattern>/rest/*</url-pattern>
   </servlet-mapping>
   <servlet>
-		<description>
+    <description>
 		</description>
-		<display-name>LoginServlet</display-name>
-		<servlet-name>LoginServlet</servlet-name>
-		<servlet-class>auth.openid.LoginServlet</servlet-class>
+    <display-name>LoginServlet</display-name>
+    <servlet-name>LoginServlet</servlet-name>
+    <servlet-class>auth.openid.LoginServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>LoginServlet</servlet-name>
-  	<url-pattern>/auth/openid</url-pattern>
+    <servlet-name>LoginServlet</servlet-name>
+    <url-pattern>/auth/openid</url-pattern>
   </servlet-mapping>
   <servlet>
     <description></description>
@@ -77,14 +77,6 @@
       <url-pattern>/admin/*</url-pattern>
     </web-resource-collection>
   </security-constraint>
-  <!-- <login-config>
-    <auth-method>FORM</auth-method>
-  </login-config>
-  <security-role>
-    <description>Administrators</description>
-    <role-name>jdbc_remote_access_admin</role-name>
-  </security-role>
-   -->
   <servlet>
     <description></description>
     <display-name>AppControl</display-name>
@@ -107,5 +99,15 @@
     <dispatcher>FORWARD</dispatcher>
     <dispatcher>INCLUDE</dispatcher>
     <dispatcher>ERROR</dispatcher>
+  </filter-mapping>
+  <filter>
+    <display-name>AuthenticatedUserFilter</display-name>
+    <filter-name>AuthenticatedUserFilter</filter-name>
+    <filter-class>auth.filter.AuthenticatedUserFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>AuthenticatedUserFilter</filter-name>
+    <url-pattern>/rest</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
 </web-app>
