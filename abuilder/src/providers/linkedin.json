@@ -1,0 +1,19 @@
+{
+"authzEndpoint":"https://www.linkedin.com/uas/oauth2/authorization",
+"tokenEndpoint":"https://www.linkedin.com/uas/oauth2/accessToken",
+
+"localClientId":"{Place application id here}",
+"localClientSecret":"{Place application secret here}",
+
+"devClientId":"",
+"devClientSecret":"",
+
+"productiveClientId":"",
+"productiveClientSecret":"",
+
+"scope":"r_basicprofile r_emailaddress",
+
+"userInfoEndpoint":"https://api.linkedin.com/v1/people/~",
+
+"userEmailEndpoint":"https://api.linkedin.com/v1/people/~/email-address"
+}

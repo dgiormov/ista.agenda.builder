@@ -1,28 +1,24 @@
 package service.rest;
 
-import java.io.IOException;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
-import com.sun.jersey.api.client.ClientResponse.Status;
-
-import servlets.AppControl;
-import entities.Session;
-import entities.LoggedUser;
-import exposed.SessionExposedBasic;
-import exposed.LoggedUserExposed;
+import persistency.entities.LoggedUser;
+import persistency.entities.Session;
+import persistency.exposed.LoggedUserExposed;
+import persistency.exposed.SessionExposedBasic;
+import admin.AppControl;
 
 @Path("rating")
 public class RatingResource {
@@ -32,11 +28,11 @@ public class RatingResource {
 	
 	@POST
 	@Path("/session")
-	public Response rateSession(@Context HttpServletRequest requst, @FormParam("rating") String rating, @FormParam("eventId") String eventId){
+	public Response rateSession(@Context HttpServletRequest requst, @QueryParam("rating") String rating, @QueryParam("sessionId") String eventId){
 		LoggedUserExposed pe = new LoggedUserExposed();
 		LoggedUser person = pe.getCurrentUser(requst);
 		
-		if (person == null || requst.getUserPrincipal() == null) {
+		if (person == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		return rateGeneric(requst, person, rating, eventId, person.getEventRatings());
@@ -56,7 +52,7 @@ public class RatingResource {
 	
 	private Response rateGeneric(HttpServletRequest request, LoggedUser person, String rating, String eventId, Map<Integer, Integer> ratings){
 		if (!AppControl.writeMode()) {
-			return Response.status(Status.PAYMENT_REQUIRED).entity("You can only rate session during the event.").build();
+//FIXME			return Response.status(Status.PAYMENT_REQUIRED).entity("You can only rate session during the event.").build();
 		}
 
 		if (eventId == null) {
@@ -76,7 +72,7 @@ public class RatingResource {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		if (checkForConflictingTalks(ratings, event, ee)) {
-			return Response.status(Status.PAYMENT_REQUIRED).entity("It is quite impossible for you to have attended all these sessions.").build();
+			return Response.status(Status.NOT_ACCEPTABLE).entity("It is quite impossible for you to have attended all these sessions.").build();
 		}
 		boolean isContained = ratings.containsKey(event.getId());
 		if(bin0 == 0){

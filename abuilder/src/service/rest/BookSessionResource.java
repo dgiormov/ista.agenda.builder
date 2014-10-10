@@ -1,29 +1,21 @@
 package service.rest;
 
-import java.io.IOException;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
-import com.sun.jersey.api.client.ClientResponse.Status;
-
-import servlets.AppControl;
-import entities.Session;
-import entities.LoggedUser;
-import exposed.SessionExposedBasic;
-import exposed.LoggedUserExposed;
+import persistency.entities.LoggedUser;
+import persistency.entities.Session;
+import persistency.exposed.LoggedUserExposed;
+import persistency.exposed.SessionExposedBasic;
 
 @Path("book/session")
 public class BookSessionResource {
@@ -32,7 +24,7 @@ public class BookSessionResource {
 	private static final float RATE_LIMIT = 10;
 	
 	@POST
-	public Response bookSession(@Context HttpServletRequest request, @FormParam("sessionId") String sessionId, @FormParam("isSelected") String isSelectedString){
+	public Response bookSession(@Context HttpServletRequest request, @QueryParam("id") String sessionId, @QueryParam("isSelected") Boolean isSelectedString){
 		if (sessionId == null || isSelectedString == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
@@ -42,7 +34,7 @@ public class BookSessionResource {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		
-		boolean bin0 = Boolean.parseBoolean(isSelectedString);
+		boolean bin0 = isSelectedString;
 
 		SessionExposedBasic ee = new SessionExposedBasic();
 		Session session = ee.findEventById(sessionId);
@@ -56,7 +48,6 @@ public class BookSessionResource {
 
 		} else {
 			person.getSessions().remove(session);
-			person.getBookedWhen().remove(session.getId());
 		}
 		pe.updateEntity(person);
 		return Response.status(Status.OK).build();

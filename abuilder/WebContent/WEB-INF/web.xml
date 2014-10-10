@@ -13,47 +13,6 @@
     <servlet-name>Jersey Web Application</servlet-name>
     <url-pattern>/rest/*</url-pattern>
   </servlet-mapping>
-  <servlet>
-    <description>
-		</description>
-    <display-name>LoginServlet</display-name>
-    <servlet-name>LoginServlet</servlet-name>
-    <servlet-class>auth.openid.LoginServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>LoginServlet</servlet-name>
-    <url-pattern>/auth/openid</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <description></description>
-    <display-name>TwitterLogin</display-name>
-    <servlet-name>TwitterLogin</servlet-name>
-    <servlet-class>twitter.TwitterLogin</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>TwitterLogin</servlet-name>
-    <url-pattern>/TwitterLogin</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <description></description>
-    <display-name>TwitterCallback</display-name>
-    <servlet-name>TwitterCallback</servlet-name>
-    <servlet-class>twitter.TwitterCallback</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>TwitterCallback</servlet-name>
-    <url-pattern>/callback</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <description></description>
-    <display-name>TwitterConnected</display-name>
-    <servlet-name>TwitterConnected</servlet-name>
-    <servlet-class>twitter.TwitterConnected</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>TwitterConnected</servlet-name>
-    <url-pattern>/has_twitter</url-pattern>
-  </servlet-mapping>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
@@ -81,25 +40,12 @@
     <description></description>
     <display-name>AppControl</display-name>
     <servlet-name>AppControl</servlet-name>
-    <servlet-class>servlets.AppControl</servlet-class>
+    <servlet-class>admin.AppControl</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>AppControl</servlet-name>
     <url-pattern>/admin/control</url-pattern>
   </servlet-mapping>
-  <filter>
-    <display-name>SecurityFilter</display-name>
-    <filter-name>SecurityFilter</filter-name>
-    <filter-class>filter.SecurityFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>SecurityFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
-    <dispatcher>FORWARD</dispatcher>
-    <dispatcher>INCLUDE</dispatcher>
-    <dispatcher>ERROR</dispatcher>
-  </filter-mapping>
   <filter>
     <display-name>AuthenticatedUserFilter</display-name>
     <filter-name>AuthenticatedUserFilter</filter-name>
@@ -107,7 +53,54 @@
   </filter>
   <filter-mapping>
     <filter-name>AuthenticatedUserFilter</filter-name>
-    <url-pattern>/rest</url-pattern>
+    <url-pattern>/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
+  <servlet>
+    <description></description>
+    <display-name>BeginAuthorization</display-name>
+    <servlet-name>BeginAuthorization</servlet-name>
+    <servlet-class>auth.login.BeginAuthorization</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BeginAuthorization</servlet-name>
+    <url-pattern>/authorize</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>RedirectServlet</display-name>
+    <servlet-name>RedirectServlet</servlet-name>
+    <servlet-class>auth.login.RedirectServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RedirectServlet</servlet-name>
+    <url-pattern>/redirect</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>IsUserLogged</display-name>
+    <servlet-name>IsUserLogged</servlet-name>
+    <servlet-class>auth.IsUserLogged</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>IsUserLogged</servlet-name>
+    <url-pattern>/user</url-pattern>
+  </servlet-mapping>
+  <security-role>
+    <description>Administrators</description>
+    <role-name>remote_access_admin</role-name>
+  </security-role>
+ <security-role>
+    <description>Users</description>
+    <role-name>user</role-name>
+  </security-role>
+   <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Admin panel</web-resource-name>
+      <url-pattern>/admin/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>remote_access_admin</role-name>
+    </auth-constraint>
+  </security-constraint>
 </web-app>

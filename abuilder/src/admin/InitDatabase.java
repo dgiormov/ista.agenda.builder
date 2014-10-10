@@ -1,15 +1,15 @@
 package admin;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.servlet.GenericServlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,18 +18,21 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import persistency.entities.Code;
+import persistency.entities.EnabledFunctionality;
+import persistency.entities.Session;
+import persistency.entities.Speaker;
+import persistency.exposed.CodesExposed;
+import persistency.exposed.EnabledFuncExposed;
+import persistency.exposed.SessionExposedBasic;
+import persistency.exposed.SpeakerExposed;
+import persistency.exposed.json.SessionJson;
 import utils.SecurityException;
-import entities.Code;
-import entities.EnabledFunctionality;
-import entities.Session;
-import entities.Speaker;
-import entities.LoggedUser;
-import exposed.CodesExposed;
-import exposed.EnabledFuncExposed;
-import exposed.SessionExposedBasic;
-import exposed.SpeakerExposed;
-import exposed.LoggedUserExposed;
-import game.Score;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import gamification.Score;
 
 /**
  * Servlet implementation class InitDatabase
@@ -56,9 +59,7 @@ public class InitDatabase extends HttpServlet {
 			logger.warn("Init Database in progress...");
 			if (request.getParameter("init") != null) {
 				logger.warn("Full Init");
-				initEvents(request, response);
-//				initPuzzleCodes(request);
-//				initHandoutCodes(request);
+				initSessions(request, response);
 				initReadOnlyMode(request);
 			} else if (request.getParameter("reset") != null) {
 				logger.warn("ratings reset");
@@ -94,7 +95,8 @@ public class InitDatabase extends HttpServlet {
 	private void initReadOnlyMode(HttpServletRequest request) {
 		EnabledFunctionality e = new EnabledFunctionality();
 		e.setUserName("admin");
-		e.setEnabled(true);
+		e.setEnabled(false);
+		//FIXME set to true before deploying the real application
 		EnabledFuncExposed ee = new EnabledFuncExposed();
 		ee.createEntity(e);
 	}
@@ -103,203 +105,76 @@ public class InitDatabase extends HttpServlet {
 		response.getWriter().print("Rereading Database initializing...");
 		lue = SpeakerExposed.getInstance();
 		try {
-			parseEvents(request, true);
+			parseSessions(request, true);
 		} catch (IOException e) {
+			throw new ServletException(e);
+		} catch (ParseException e) {
 			throw new ServletException(e);
 		}
 		response.getWriter().print("[OK]");
 	}
 
-	private void initEvents(HttpServletRequest request,
+	private void initSessions(HttpServletRequest request,
 			HttpServletResponse response) throws IOException, ServletException {
 		response.getWriter().print("Database initializing...");
 		lue = SpeakerExposed.getInstance();
 		try {
-			parseEvents(request, false);
+			parseSessions(request, false);
 		} catch (IOException e) {
+			throw new ServletException(e);
+		} catch (ParseException e) {
 			throw new ServletException(e);
 		}
 		response.getWriter().println("[OK]");
 	}
 
-	private Speaker createParticipant(String id, String name, String email,
-			String twitterAccount) {
-		Speaker p = new Speaker();
-		p.setId(id);
-		p.setName(name);
-		if (email == null) {
-			p.setEmail(name.toLowerCase().replaceAll(" ", ".")
-					.replaceAll("..", ".")
-					+ "@sap.com");
-		} else {
-			p.setEmail(email);
+	private void createSpeakers(List<Speaker> ps) {
+		for (Speaker speaker : ps) {
+			if(speaker != null){
+				System.out.println(speaker.toString());
+				lue.createEntity(speaker);
+			} else {
+				System.out.println("Speaker is null");
+			}
+				
 		}
-		if (twitterAccount == null) {
-			p.setTwitterAccount(twitterAccount);
-		}
-
-		lue.createEntity(p);
-		return p;
 	}
 
-	public List<Session> parseEvents(HttpServletRequest request, boolean merge)
-			throws IOException {
+	public List<Session> parseSessions(HttpServletRequest request, boolean merge)
+			throws IOException, ParseException {
 		SessionExposedBasic ex = new SessionExposedBasic();
 
+		Gson g = new Gson();
+		final BufferedReader readerSpeakers = new BufferedReader(new InputStreamReader(request.getServletContext()
+				.getResourceAsStream("speakers.json")));
+		final BufferedReader readerSessions = new BufferedReader(new InputStreamReader(request.getServletContext()
+				.getResourceAsStream("sessions.json")));
 
-		String text0 = getFileContents(request.getServletContext()
-				.getResourceAsStream("events.csv"));
-		StringTokenizer st0 = new StringTokenizer(text0, "~");
-		List<Session> result = new ArrayList<Session>();
-		while (st0.hasMoreTokens()) {
-			String text = st0.nextToken().trim();
-			StringTokenizer st = new StringTokenizer(text, "=");
-			Session e = new Session();
-			while (st.hasMoreTokens()) {
-				String id0 = st.nextToken().trim();
-				e.setId(Integer.parseInt(id0));
-				String name0 = st.nextToken().trim();
-				e.setName(name0);
-				String description0 = st.nextToken().trim();
-				e.setDescription(description0);
-				String speakers0 = st.nextToken().trim();
-				String speakers_id0 = st.nextToken().trim();
-				e.setSpeakers(getSpeakers(speakers_id0, speakers0));
-				String startTime0 = st.nextToken().trim();
-				e.setStartTime(Integer.parseInt(startTime0));
-				String duration0 = st.nextToken().trim();
-				e.setDuration(Integer.parseInt(duration0));
-				String room0 = st.nextToken().trim();
-				e.setRoom(room0);
-				String tags0 = st.nextToken().trim();
-				e.setTags(toCollection(tags0));
-				System.out.println("id: " + id0);
-				System.out.println("name: " + name0);
-				System.out.println("description: " + description0);
-				System.out.println("speakers0: " + speakers0);
-				System.out.println("speakers_ids: " + speakers_id0);
-				System.out.println("start time: " + startTime0);
-				System.out.println("duration: " + duration0);
-				System.out.println("room: " + room0);
-				System.out.println("tags: " + tags0);
-			}
-			result.add(e);
-		}
-		for (Session event : result) {
+		List<Speaker> speakers = g.fromJson(readerSpeakers, new TypeToken<List<Speaker>>(){}.getType());
+		createSpeakers(speakers);
+		List<SessionJson> sessions = g.fromJson(readerSessions, new TypeToken<List<SessionJson>>(){}.getType());
+		List<Session> result = toSessionEntities(sessions, speakers);
+		for (Session session : result) {
 			if(merge){
-				Session newEvent = ex.findEventById(event.getId()+"");
+				Session newEvent = ex.findEventById(session.getId()+"");
 				if(newEvent != null){
-					ex.updateEntity(event);	
+					ex.updateEntity(session);	
 				} else {
-					ex.createEntity(event);
+					ex.createEntity(session);
 				}
 			} else {
-				ex.createEntity(event);
+				ex.createEntity(session);
 			}
 		}
 		return result;
 	}
 
-	private List<String> toCollection(String tags0) {
-		List<String> result = new ArrayList<String>();
-		if (tags0 != null) {
-			StringTokenizer st = new StringTokenizer(tags0, ",");
-			while (st.hasMoreTokens()) {
-				result.add(st.nextToken().trim());
-			}
+	private List<Session> toSessionEntities(List<SessionJson> sessions, List<Speaker> speakers) throws ParseException {
+		List<Session> result = new ArrayList<Session>();
+		for (SessionJson session : sessions) {
+			result.add(session.toEntity());
 		}
 		return result;
-	}
-
-	private List<Speaker> getSpeakers(String sIds, String sNames) {
-		List<Speaker> result = new ArrayList<Speaker>();
-		StringTokenizer stIds = new StringTokenizer(sIds, ",");
-		StringTokenizer stNames = new StringTokenizer(sNames, ",");
-		while (stIds.hasMoreTokens()) {
-			String uid = stIds.nextToken().trim().replaceAll("\n", "");
-			String name = stNames.nextToken().trim().replaceAll("\n", "");
-			if(uid.toLowerCase().equals("all") || uid.toLowerCase().equals("none")){
-				break;
-			}
-			Speaker p = lue.findUserById(uid.trim());
-			if (p != null) {
-				result.add(p);
-			} else {
-				result.add(createParticipant(uid, name, null, null));
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Gets the string content of a file.
-	 * 
-	 * @param file
-	 *            File handle.
-	 * @param charsetName
-	 *            charset
-	 * @param request
-	 * @return File content represented as string
-	 * @throws IOException
-	 */
-	public String getFileContents(InputStream is) throws IOException {
-		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		byte[] buffer = new byte[1000];
-		try {
-			int read = is.read(buffer);
-			while (read > 0) {
-				bos.write(buffer, 0, read);
-				read = is.read(buffer);
-			}
-			return bos.toString("UTF-8");
-		} finally {
-			is.close();
-			bos.close();
-		}
-	}
-
-	private void initPuzzleCodes(HttpServletRequest request) throws IOException {
-		String text0 = getFileContents(request.getServletContext()
-				.getResourceAsStream("codes_puzzle.txt"));
-		persistCodes(processPuzzleCodesFromText(text0));
-	}
-
-	public List<Code> processPuzzleCodesFromText(String text0) {
-		StringTokenizer st = new StringTokenizer(text0, "\r\n");
-		List<Code> result = new ArrayList<Code>();
-		int puzzleTypeIndex = 1;
-		int puzzlePieceIndex = 0;
-		while (st.hasMoreTokens()) {
-			String token = (String) st.nextToken();
-			if(token.length() > 0 && token.indexOf(",") != -1){
-				String code = token.substring(0, token.indexOf(","));
-				Code c = new Code();
-				c.setCode(code.trim());
-				c.setName("Puzzle");
-				c.setType(Code.PUZZLE_CODE);
-				c.setGid(Code.PUZZLE_CODE);
-				c.setPoints(Score.PUZZLE);
-				c.setMaxCodesOfThisType(1);
-				String puzzleCode = puzzleType[puzzleTypeIndex]+puzzlePieces[puzzlePieceIndex++];
-				c.setPuzzleCodeId(puzzleCode);
-				if(puzzlePieceIndex > 5){
-					puzzleTypeIndex++;
-					puzzlePieceIndex=0;
-				}
-				if(puzzleTypeIndex > 4){
-					puzzleTypeIndex=0;
-				}
-				result.add(c);
-				System.out.println(code + " - "+puzzleCode);
-			}
-		}
-		return result;
-	}
-
-	private void initHandoutCodes(HttpServletRequest request) throws IOException {
-		String text0 = getFileContents(request.getServletContext()
-				.getResourceAsStream("codes.txt"));
-		persistCodes(processHandoutCodesFromText(text0));
 	}
 
 	public List<Code> processHandoutCodesFromText(String text0) {
@@ -386,5 +261,4 @@ public class InitDatabase extends HttpServlet {
 			ce.createEntity(code);
 		}
 	}
-
 }

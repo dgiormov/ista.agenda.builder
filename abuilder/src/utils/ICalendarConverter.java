@@ -1,7 +1,6 @@
 package utils;
 
-import util.Constants;
-import entities.Session;
+import persistency.entities.Session;
 
 public class ICalendarConverter {
 

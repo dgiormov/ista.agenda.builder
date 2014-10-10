@@ -9,12 +9,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import persistency.entities.LoggedUser;
+import persistency.entities.Points;
+import persistency.exposed.LoggedUserExposed;
+
 import com.google.gson.Gson;
 
-import util.PointsHelper;
-import entities.LoggedUser;
-import entities.Points;
-import exposed.LoggedUserExposed;
+import utils.PointsHelper;
 
 public class RankingResource {
 	

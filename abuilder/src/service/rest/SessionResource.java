@@ -1,7 +1,5 @@
 package service.rest;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -9,22 +7,21 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import rest.wrappers.SessionBasic;
-import util.Constants;
+import persistency.entities.LoggedUser;
+import persistency.entities.Session;
+import persistency.exposed.LoggedUserExposed;
+import persistency.exposed.SessionExposedBasic;
+import utils.Constants;
 import utils.ICalendarConverter;
 
 import com.google.gson.Gson;
-
-import entities.LoggedUser;
-import entities.Session;
-import exposed.LoggedUserExposed;
-import exposed.SessionExposedBasic;
 
 @Produces({ MediaType.APPLICATION_JSON })
 @Path("/sessions")
@@ -41,10 +38,10 @@ public class SessionResource {
 
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
-	public List<SessionBasic> listAllSessions(@Context HttpServletRequest hsr) throws Exception {
+	public Response listAllSessions(@Context HttpServletRequest hsr, @QueryParam("date") int date) throws Exception {
 		SessionExposedBasic eventExposed = new SessionExposedBasic();
-		return eventExposed.allEntities(hsr);
-		
+		return Response.status(Response.Status.OK)
+				.entity(g.toJson(eventExposed.allEntitiesOnDate(hsr, date))).build();
 	}
 	
 	@GET

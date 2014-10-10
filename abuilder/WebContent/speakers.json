@@ -1,0 +1,418 @@
+[
+    {
+      "id": "ddjambov",
+      "name": "Daniel Djambov",
+	  "company": "Telerik AD",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "QA",
+      "email": "",
+	  "twitter": "",
+	  "bio": "http://bg.linkedin.com/pub/daniel-djambov/0/943/96"
+    },
+	{
+      "id": "bmihaylov",
+      "name": "Boyan Mihaylov",
+	  "company": "Ebita ApS",
+	  "country": "Denmark",
+	  "city": "Copenhagen",
+	  "job_title": "Lead developer",
+      "email": "",
+	  "twitter": "",
+	  "bio": "- Over 5 years of experience with web: techniques, concepts, architectures, tools
+- Lecturer at the University of Copenahegn (distributed systems)
+- Lecturer at the University of Sofia (separate talks about JavaScript)
+- Speaker at JSSaturday Bulgaria, 2013"
+    },
+	{
+      "id": "dddimitrov",
+      "name": "Dimitar Dimitrov",
+	  "company": "Axway Software",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "QA Manager",
+      "email": "",
+	  "twitter": "",
+	  "bio": "Dimitar Dimitrov is a QA manager with more than 9 years of experience in managing quality of various products in different domains – embedded automotive software, financial risk management, secured data exchange. 
+Svilen Dikov is Senior Software Engineer, Automation Framework. He has more than 10 years development experience primarily in test automation and server-side technologies. He is part of the team developing Axway's Automation Framework. It includes wide range of features for functional, integration and performance testing."
+    },
+	{
+      "id": "mgag",
+      "name": "Madhusudhanan Gag",
+	  "company": "VMware",
+	  "country": "India",
+	  "city": "Bangalore",
+	  "job_title": "senior member of technical staff",
+      "email": "",
+	  "twitter": "",
+	  "bio": "Madhusudhanan Gangadharan:
+
+Have in-total 9+ years of experience out of which,
+ 
+(i). 5 Years of experience in 2G/3G mobile based application development/testing on IMS networks , attended technical workshops on Open mobile alliance forums, also have hands on experience in programming languages like C/Java/Perl , and databases like Postgres/Oracle 
+
+(ii). 4 + years of experience working  in Virtualization platforms , VCP 4.1 certified, presented papers for events like vHack(Conceptualize ,Design,Implement and present an technical idea ).
+ 
+Being active participant in the innovation front ,submitted 1 patent application in the virtualization platform.
+
+Have experience in designing ,developing and Implementing testing tools , that makes the QA engineering life easy."
+
+    },
+	{
+      "id": "ghegdal",
+      "name": "Gururaj Hegdal",
+	  "company": "VMware",
+	  "country": "India",
+	  "city": "Bangalore",
+	  "job_title": "senior member of technical staff",
+      "email": "",
+	  "twitter": "",
+	  "bio": "Have 9+ years of experience in total, working on vSphere Products (starting from VC1.3) SDK kit testing. Responsible for maintaining the automation test suite, developing API tests (using Java programming language) for new features/customer use cases.  I am a VCP 4.1. Submitted more than 10 papers to VMworld/Internal R&D events.
+
+Being active participant in the innovation front ,submitted 4 patent applications in the virtualization platform.
+ 
+As a presenter - presented a paper/idea in Internal innovation events, gave tech talks on various topics like vSphere SDK architecture overview, VIM API testing methodology, feature overview session to local and remote teams.
+
+Have experience in designing ,developing and Implementing testing tools , that makes the QA engineering life easy."
+    },
+	{
+      "id": "hgergov",
+      "name": "Hristo Gergov",
+	  "company": "Musala Soft",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Senior QA Engineer",
+      "email": "",
+	  "twitter": "",
+	  "bio": "Experience with large multinational projects for IBM and VMware. 
+Two years of experience with Automated Testing of Web applications.
+Experience with introduction of a Continuous Integration process in teams where releasing frequently is a key success factor.
+
+Lecturer in the Musala Soft Muffin Conference 2013 with presentation 'Behavior Driven Development with Watir and Cucumber'"
+
+    },
+	{
+      "id": "isamardjiev",
+      "name": "Iassen Samardjiev",
+	  "company": "Software AG",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Senior Software QA Engineer",
+      "email": "",
+	  "twitter": "",
+	  "bio": "I'm currently working as a Senior Software QA Engineer at Software AG. I’ve been in the company for five years and over this time gained experience with different automation tools like QTP, Selenium, QF-Test. I do not have previous experience in presenting at conferences."
+    },
+	{
+      "id": "gstaykova",
+      "name": "Galina Staykova",
+	  "company": "Software AG",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Senior Software QA Engineer",
+      "email": "",
+	  "twitter": "",
+	  "bio": "I'm currently working as a Senior Software QA Engineer at Software AG. I’ve been in the company for five years and over this time gained experience with different automation tools like QTP, Selenium, QF-Test. I do not have previous experience in presenting at conferences."
+    },
+	{
+      "id": "ndokovski",
+      "name": "Nikolai Dokovski",
+	  "company": "SAP Labs Bulgaria",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Product Owner SAP HANA Cloud Platform",
+      "email": "",
+	  "twitter": "",
+	  "bio": "Certified Scrum Master and Certified Professional Scrum Developer teaching and practicing agile software development techniques. Member of global SAP agile software development coaches with solid experience of educating and coaching software development teams. Conference speaker including ISTA 2011."
+    },
+	{
+      "id": "rspasov",
+      "name": "Rosen Spasov",
+	  "company": "Software AG",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Senior Software Engineering Manager",
+      "email": "",
+	  "twitter": "",
+	  "bio": "I'm currently working as a Senior Software Engineering Manager at Software AG. My team and I have been implementing an event-driven architecture using Apache Camel and have gained more than 3 years of experience using this framework. I don't have previous experience talking at conferences but I've been lecturing Java courses to university students and I have experience presenting in front of 20+ people. I'm using English on a daily basis thus I consider this not be a problem as well."
+    },
+	{
+      "id": "dsathyamurthy",
+      "name": "Dattathreya Sathyamurthy",
+	  "company": "VMware",
+	  "country": "India",
+	  "city": "Bangalore",
+	  "job_title": "Senior MTS",
+      "email": "",
+	  "twitter": "",
+	  "bio": "I have about 10 years of industry experience as Java Developer in different companies working for multiple projects. I have a Bachelors degree in Information Science from Karnataka State University in India. Through my career I have submitted and presented papers and ideas with internal conferences of the company. While working with Hewlett Packard, I presented an idea about dynamically deploying software updates in a SaaS environment using OSGi frameworks at a Asia level conference. With VMware, I have two of my submissions accepted in our internal global conference titled RADIO. One on the topic of desktop migration to cloud using VMware technologies and the other being the topic presented here: Walkman. I do not have any links to these presentations since these were internal to the company."
+    },
+	{
+      "id": "atodorov",
+      "name": "Angel Todorov",
+	  "company": "Infragistics Inc.",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Principal Architect",
+      "email": "",
+	  "twitter": "",
+	  "bio": "I’ve always loved computers and I have over 10 years of professional software development experience - I’ve worked for large enterprises building Java and .NET-based software solutions and then for the past 7 years I have been part of Infragistics. One of my passions is JavaScript, and building high fidelity web UIs. My coolest project was a neural networks engine, done back in 2003,  which was able to reconstruct partial / broken/ incomplete 2D shapes.  My current role is Principal Architect and I have the chance to work on different teams and projects – I love to hack with JavaScript on a daily basis, build tools, frameworks, and POCs that help our teams and products succeed. I have given technical talks at various events such as ISTA, jQuery Sofia,  Microsoft InTouch and WebSummit Bulgaria."
+    },{
+      "id": "nbogdanov",
+      "name": "Nikola Bogdanov",
+	  "company": "Musala Soft",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Team Leader",
+      "email": "",
+	  "twitter": "",
+	  "bio": "- Lecturer in Sofia University, having own master course called \"Agile processes and methodologies\"
+- Lecturer in different events for Musala Soft
+- Lecturer in 9 Academy
+- Professional experience as team leader and software engineer in Musala Soft workin"
+    },
+	{
+      "id": "dtotseva",
+      "name": "Dilyana Totseva",
+	  "company": "MentorMate",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "QA Lead",
+      "email": "",
+	  "twitter": "",
+	  "bio": "With more than 5 years professional experience Dilyana is a QA Lead in MentorMate passionate for automation best practices. She strives to produce the highest quality test solutions with establishing pragmatic test strategies in dynamic Agile environment and actively innovates areas for improvement. In each project she participates she pushes the boundaries and applies her business attitude to improve the quality of the product. As PhD student, Dilyana has several publications in international conferences.
+	  Speaker at MobCon BG the premier mobile confernce in Bulgaria, session - Mobile Testing Challenges, http://mobcon.bg/dilyana-totseva/#tab-id-2"
+
+    },
+	{
+      "id": "givanov",
+      "name": "Georgi Ivanov",
+	  "company": "MentorMate",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Senior Automation QA Engineer",
+      "email": "",
+	  "twitter": "",
+	  "bio": "With more than 6 years professional experience, Georgi is a Senior Automation QA Engineer in MentorMate who have successfully established automated testing strategies and solutions in variety of projects - Web, Mobile, Big Data, Restful Services and many more. He has established an Automation Testing Trainings in the company and loves to share his experience with other people and help them become better professionals. Georgi is always passionate for trying new technologies and techniques in automation testing."
+    },
+	{
+      "id": "rlönn",
+      "name": "Ragnar Lönn",
+	  "company": "Load Impact",
+	  "country": "Sweden",
+	  "city": "Stockholm",
+	  "job_title": "Founder, Product Manager",
+      "email": "",
+	  "twitter": "",
+	  "bio": "Ragnar Lönn is founder and product manager of Load Impact, the world's most widely used online load testing service. He has always been a coder, but started his career in hardware, building and selling custom-made PCs in the late 80's and early 90's. In 1994 he founded Algonet, one of the very first consumer ISPs in Sweden (sold to telco Telenordia in 1996). Then he ran a software consulting business for a few years, building software for test and performance measurement, ultimately leading to the creation of Load Impact.
+	  Linkedin: https://www.linkedin.com/in/ragnarlonn"
+    },
+	{
+      "id": "dsimov",
+      "name": "Dimiter Simov",
+	  "company": "SAP Labs Bulgaria",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Product Expert - User Experience",
+      "email": "",
+	  "twitter": "",
+	  "bio": "I have 15 years of hands-on experience in usability, user documentation, and quality assurance. I am mentoring, consulting, and training people and companies in these fields. I am also speaking a few times a year at events. 
+
+I presented a version of the proposed topic - under the title To Message or Not to Message - at UXSofia 2014 (http://www.uxsofia.com/en/#seminar). Please see the slides at http://www.slideshare.net/dsimov/to-message-or-not-toux-sofia2014"
+
+    },
+	{
+      "id": "dmdimitrov",
+      "name": "Dimitar Dimitrov",
+	  "company": "Experian Bulgaria",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Senior QA Engineer II",
+      "email": "",
+	  "twitter": "",
+	  "bio": "I've been involved professionally with software development and quality assurance for the past 14 years. In that time I was able to take part in virtually all activities and roles that this industry provides.
+
+I’m inspired by technology and the possibilities it creates. I’m open in sharing my passion and knowledge with others and eager for every chance to learn something new.
+
+More details available in my LinkedIn profile:
+https://www.linkedin.com/pub/dimitar-dimitrov/0/418/85a"
+
+    },
+	{
+      "id": "rleusden",
+      "name": "Roland van Leusden",
+	  "company": "Praegus",
+	  "country": "Netherlands",
+	  "city": "Almere",
+	  "job_title": "senior Performance Tester",
+      "email": "",
+	  "twitter": "@RolandLeusden",
+	  "bio": "Roland van Leusden is a senior test consultant with an in-depth experience of functional testing, test automation and performance testing utilizing open source and commercial tooling. His experiences with off shore (India) and near shore (Romania) together with his interest in people who are involved in the project, ensures a pleasant and targeted attitude where quality and punctuality are very important. In collaboration with the customer he works out the best test strategy in relation with risk, time and the project specification. Roland shares his knowledge and experiences with customers, in articles and at (inter)national conferences.
+
+https://www.linkedin.com/in/rleusden
+https://twitter.com/RolandLeusden"
+
+    },
+	{
+      "id": "barnaudov",
+      "name": "Borislav Arnaudov",
+	  "company": "SAP Labs Bulgaria",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Product Owner",
+      "email": "",
+	  "twitter": "",
+	  "bio": "I have 6 years of experience with cloud solutions, build and automation of test scenarios, designing and implementing Continuous Delivery systems and processes. The last 3 years I am leading the central team responsible for improving and maintaining the Continuous Delivery system used for developing the core of the SAP HANA Cloud Platform."
+    },
+	{
+      "id": "iduevski",
+      "name": "Ivailo Duevski",
+	  "company": "VMware",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Staff QE engieneer",
+      "email": "",
+	  "twitter": "",
+	  "bio": "I'm working in VMware as QE engineer leading the Flex UI automation effort on vCenter Site Recovery Manager product. My background spans 14 years of industry experience, having worked in a wide range of software lifecycle roles, including mutli-year terms as QA engineer and team lead for in-house and outsourced test automation. Technically, I come from the Java-based enterprise landscape (J2ME/SE/EE, enterprise backend, Web and RIA). As presenter, I have regularly delivered technical presentations on my work to small groups, but unfortunately, nothing video-recorded."
+    },
+	{
+      "id": "kbaylov",
+      "name": "Krasimir Baylov",
+	  "company": "Musala Soft",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Senior Software Engineer",
+      "email": "",
+	  "twitter": "",
+	  "bio": "Krasimir Baylov is a Senior Software Engineer with excellent theoretical background, strong interest and academic focus on software architectures, software development processes, and methodologies. He has been working on variety of projects for different international clients  and using  variety of technologies,  with professional focus on SOA, Java, WEB Services and WEB technologies.  His professional qualifications include a number of process and project management and software architecture trainings. Krasimir is currently doing a PhD in Self-Adaptive Software Architectures trying to apply his research in industry projects.
+
+Staging experience:
+1. SEPG Europe 2011 (Dublin, Ireland) - \"Achieving speed, agility and high quality results with peer reviews\" (poster presentation)
+2. EuroMed SPI 2011 (Bilbao, Spain) - \"CMMI Verification in Collaboration with Agile\" (presentation)
+3. SEPG Europe 2012 (Madrid, Spain) - \"Mature Business Analysis in Distributed Agile Teams\" (poster presentation)
+4. PMI Bulgaria Chapter Meeting (Sofia, Bulgaria), 2012 - \"Improving Quality Through Peer Review\" (presentation)
+5. MusalaSoft Internal Training (Sofia, Bulgaria), 2012 -  \"Introduction to Software Architectures\" (presentation)
+6. High School of Mathematics (Pazardzhik, Bulgaria), 2013- \"Introduction to Agile Project Management\"
+5. MusalaSoft Internal Training (Sofia, Bulgaria), 2012 -  \"Agile Software Architectures\" (presentation)
+7. SAP D-CODE (Sofia, Bulgaria), 2014 -  \"A smart thing of Internet of Things – Smart Vending\" (presentation)
+8. Agile Lean Europe 2014 (Krakow, Poland), August 2014 (forthcoming) - \"Lean-Aware Self-Adaptive Systems\" (presentation)"
+
+    },
+	{
+      "id": "eslavov",
+      "name": "Emanuil Slavov",
+	  "company": "Komfo Inc",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Head of QA",
+      "email": "",
+	  "twitter": "",
+	  "bio": "More than 11 years of QA experience. Presented twice at ISTA."
+    },
+	{
+      "id": "dmilov",
+      "name": "Dimitar Milov",
+	  "company": "VMware",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Sr. MTS",
+      "email": "",
+	  "twitter": "",
+	  "bio": "I have no previous experience in front of large audience."
+    },{
+      "id": "hbolibekyan",
+      "name": "Hovhannes Bolibekyan",
+	  "company": "VMware",
+	  "country": "",
+	  "city": "",
+	  "job_title": "Senior Quality Engineer",
+      "email": "",
+	  "twitter": "",
+	  "bio": "Hovhannes Bolibekyan, PhD, has 10+ years of industry experience in QE with deep knowledge of different techniques in software testing. Hovhannes is an experienced university lecturer (14 years). He presented his talks at different international conferences such as Logic Colloquium (starting 2003), Computer Science and Information Technologies and other meetings. Hovhannes conducts scientific researches in the area of automated theorem provers."
+    },
+	{
+      "id": "aaghabekyan",
+      "name": "Artur Aghabekyan",
+	  "company": "VMware",
+	  "country": "Armenia",
+	  "city": "Yerevan",
+	  "job_title": "Quality Engineer 3",
+      "email": "",
+	  "twitter": "",
+	  "bio": "Artur Aghabekyan has 10+years experience in QE. He has a deep knowledge of software development life cycle, practical experience in development and testing of software."
+    },
+	{
+      "id": "pdimitrov",
+      "name": "Petyo Dimitrov",
+	  "company": "Musala Soft",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Senior Software Engineer",
+      "email": "",
+	  "twitter": "",
+	  "bio": "I am a software engineer with 6+ years of experience working primarily in enterprise Java projects. 
+I have presented technical topics on internal seminars organized by my company (audience ~30 people) and guest lectures in Technical University - Sofia, Faculty \"Computer Systems and Control\"."
+    },
+	{
+      "id": "bstrandjev",
+      "name": "Boris Strandjev",
+	  "company": "Musala Soft",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Team Leader",
+      "email": "",
+	  "twitter": "",
+	  "bio": "Boris Strandjev - Software engineer for more than 5 years now. Specialising in mobile development and process improvement. History on stage:
+ * Guest lecturer in the FMI of Sofia University in the courses of \"Design and Analysis of algorithms\", \"Advanced data structures\" and \"Competitional programming\"
+ * Presented article \"Improving software architecture through circular dependency detection\" in International Conference Automatics and Informatics'10
+ * Presented article \"On applicability of Principal Component Analysis to concept learning from images\" in IEEE International Symposium on Innovations in Intelligent Systems and Applications (INISTA), 2013
+ * Presented \"Databases in Android\" in Google IO extended 2013
+ * Presented \"Android automated testing\" in Google IO extended 2014"
+    },
+	{
+      "id": "ppetarcheva",
+      "name": "Petya Petarcheva",
+	  "company": "Musala Soft",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Senior QA Engineer",
+      "email": "",
+	  "twitter": "",
+	  "bio": "Petya Petarcheva - QA engineer for more than 4 years now. Specialising in automation testing. History on stage:
+  * Presented \"Android automated testing\" in Google IO extended 2014"
+    },
+	{
+      "id": "nneychev",
+      "name": "Nikolay Neychev",
+	  "company": "SAP Labs Bulgaria",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Senior Project Consultant/ Scrum Master",
+      "email": "",
+	  "twitter": "",
+	  "bio": "Nikolai Neichev and Georgi D. Dimitrov:
+We have conducted sessions on various events.
+Including one of the most popular sessions on ISTA 2013 - \"Lets Play The Game Of Testing !\"."
+    },
+	{
+      "id": "iivanov",
+      "name": "Ivan Ivanov",
+	  "company": "VMware",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "QE",
+      "email": "",
+	  "twitter": "",
+	  "bio": "Ivan Ivanov has 5+ years of professional experience in software development and testing. Also he has experience in doing several company internal presentations and demos of internally developed tools."
+    },
+	{
+      "id": "gpeshterski",
+      "name": "Georgi Peshterski",
+	  "company": "VMware",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "QE",
+      "email": "",
+	  "twitter": "",
+	  "bio": "Georgi Peshterski has over 10 years of professional experience in software development and test automation.  He is an active contributor to the testing framework projects and innovation initiatives at VMware."
+    }
+ ]

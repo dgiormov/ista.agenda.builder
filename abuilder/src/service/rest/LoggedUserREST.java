@@ -10,10 +10,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.google.gson.Gson;
+import persistency.entities.Speaker;
+import persistency.exposed.SpeakerExposed;
 
-import entities.Speaker;
-import exposed.SpeakerExposed;
+import com.google.gson.Gson;
 
 //@Path("configuration/account/{applicationAccount}/application/{applicationName}/tenant/{tenantName}")
 @Path("user")

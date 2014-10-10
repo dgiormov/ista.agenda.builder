@@ -1,0 +1,17 @@
+{
+"authzEndpoint":"https://www.facebook.com/dialog/oauth",
+"tokenEndpoint":"https://graph.facebook.com/oauth/access_token",
+
+"localClientId":"{Place application id here}",
+"localClientSecret":"{Place application secret here}",
+
+"devClientId":"",
+"devClientSecret":"",
+
+"productiveClientId":"",
+"productiveClientSecret":"",
+
+"scope":"email,public_profile",
+
+"userInfoEndpoint":"https://graph.facebook.com/me"
+}

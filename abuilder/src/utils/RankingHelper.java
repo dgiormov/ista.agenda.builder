@@ -2,7 +2,7 @@ package utils;
 
 import java.util.List;
 
-import game.Player;
+import gamification.Player;
 
 public class RankingHelper {
 

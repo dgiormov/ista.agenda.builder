@@ -1,0 +1,17 @@
+{
+"authzEndpoint":"",
+"tokenEndpoint":"",
+
+"localClientId":"{Place application id here}",
+"localClientSecret":"{Place application secret here}",
+
+"devClientId":"",
+"devClientSecret":"",
+
+"productiveClientId":"",
+"productiveClientSecret":"",
+
+"scope":"",
+
+"userInfoEndpoint":""
+}
