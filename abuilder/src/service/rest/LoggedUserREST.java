@@ -1,21 +1,18 @@
 package service.rest;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import persistency.entities.Speaker;
-import persistency.exposed.SpeakerExposed;
+import persistency.entities.LoggedUser;
+import persistency.exposed.LoggedUserExposed;
 
 import com.google.gson.Gson;
 
-//@Path("configuration/account/{applicationAccount}/application/{applicationName}/tenant/{tenantName}")
 @Path("user")
 @Produces({ MediaType.APPLICATION_JSON })
 @SuppressWarnings({})
@@ -28,42 +25,28 @@ public class LoggedUserREST {
 	}
 
 	@GET
-	@Path("{path:.*}")
-	public Response readConfiguration(
-			@PathParam("applicationAccount") String applicationAccount,
-			@PathParam("applicationName") String applicationName,
-			@PathParam("path") String rawPath,
-			@PathParam("tenantName") String tenantName) throws Exception {
-		SpeakerExposed users = new SpeakerExposed();
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getCurrentLoggedUser(@Context HttpServletRequest request) {
+		LoggedUserExposed lue = new LoggedUserExposed();
+		LoggedUser currentUser = lue.getCurrentUser(request);
+		LoggedUserJson result = new LoggedUserJson();
+		result.isLogged = false;
+		if(currentUser != null){
+			result.isLogged = true;
+			
+			if(currentUser.getName().indexOf(" ") != -1){
+				result.name = currentUser.getName().substring(0,  currentUser.getName().indexOf(" "));	
+			} else {
+				result.name = currentUser.getName();
+			}
+		}
 		return Response.status(Response.Status.OK)
-				.entity(g.toJson(users.allEntities())).build();
+				.entity(g.toJson(result)).build();
+	}
+	
+	private class LoggedUserJson {
+		private boolean isLogged;
+		private String name;
 	}
 
-//	@POST
-//	// @Path("{path:.+}")
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	public Response createOrUpdate(String content) {
-//		try {
-//			LoggedUserExposed userDao = new LoggedUserExposed();
-//			Participant e = g.fromJson(content, Participant.class);
-//			userDao.createEntity(e);
-//			return Response.status(Response.Status.OK).build();
-//		} catch (Exception e) {
-//			return Response
-//					.status(Response.Status.BAD_REQUEST)
-//					.entity("System DB Configuration API cannot create configurations with this name.").type("text/plain").build(); //$NON-NLS-1$ //$NON-NLS-2$
-//		}
-//	}
-
-	@DELETE
-	@Path("{path:.+}")
-	public Response deleteConfiguration(
-			@PathParam("applicationAccount") String applicationAccount,
-			@PathParam("applicationName") String applicationName,
-			@PathParam("tenantName") String tenantName,
-			@PathParam("path") String rawPath) {
-		return Response
-				.status(Response.Status.BAD_REQUEST)
-				.entity("System DB Configuration API cannot delete configurations with this name.").type("text/plain").build(); //$NON-NLS-1$ //$NON-NLS-2$
-	}
 }
