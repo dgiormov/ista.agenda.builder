@@ -25,7 +25,6 @@ public class LoggedUserREST {
 	}
 
 	@GET
-	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getCurrentLoggedUser(@Context HttpServletRequest request) {
 		LoggedUserExposed lue = new LoggedUserExposed();
 		LoggedUser currentUser = lue.getCurrentUser(request);
