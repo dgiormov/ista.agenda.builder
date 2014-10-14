@@ -90,11 +90,11 @@
     <description>Administrators</description>
     <role-name>remote_access_admin</role-name>
   </security-role>
- <security-role>
+  <security-role>
     <description>Users</description>
     <role-name>user</role-name>
   </security-role>
-   <security-constraint>
+  <security-constraint>
     <web-resource-collection>
       <web-resource-name>Admin panel</web-resource-name>
       <url-pattern>/admin/*</url-pattern>
@@ -103,4 +103,14 @@
       <role-name>remote_access_admin</role-name>
     </auth-constraint>
   </security-constraint>
+  <servlet>
+    <description></description>
+    <display-name>Logout</display-name>
+    <servlet-name>Logout</servlet-name>
+    <servlet-class>auth.login.Logout</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Logout</servlet-name>
+    <url-pattern>/logout</url-pattern>
+  </servlet-mapping>
 </web-app>
