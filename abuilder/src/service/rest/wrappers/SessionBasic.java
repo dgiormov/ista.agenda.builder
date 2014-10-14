@@ -11,7 +11,7 @@ import persistency.entities.Session;
 import persistency.entities.Speaker;
 
 @XmlRootElement
-public class SessionBasic {
+public class SessionBasic implements Comparable<SessionBasic>{
 
 	private int id;
 	public int getId() {
@@ -39,6 +39,7 @@ public class SessionBasic {
 		searchTerms = e.getSearchTerms();
 		tags = e.getTags();
 		startTime = e.getStartTime();
+		startTimeString = e.getStartTimeString();
 		duration = e.getDuration();
 		track = e.getTrack();
 		SimpleDateFormat df = new SimpleDateFormat("d.MM");
@@ -78,6 +79,11 @@ public class SessionBasic {
 
 	public void setDate(String date) {
 		this.date = date;
+	}
+
+	@Override
+	public int compareTo(SessionBasic o) {
+		return this.getStartTime() - o.getStartTime();
 	}
 
 }

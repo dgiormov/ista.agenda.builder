@@ -58,7 +58,6 @@ public class Session implements Serializable {
 	@Transient
 	private String searchTerms;
 	
-	@Transient
 	private String startTimeString;
 
 	@Transient

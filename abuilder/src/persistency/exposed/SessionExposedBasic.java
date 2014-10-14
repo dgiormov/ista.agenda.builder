@@ -1,6 +1,7 @@
 package persistency.exposed;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -75,6 +76,7 @@ public class SessionExposedBasic {
 			}
 			resultList.add(new SessionBasic(event));
 		}
+		Collections.sort(resultList);
 		return resultList;
 	}
 	
