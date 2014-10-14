@@ -34,7 +34,10 @@ public class SessionWrapped {
 		tags = e.getTags();
 		startTime = e.getStartTime();
 		duration = e.getDuration();
-		isSelected = e.isSelected();
+		isSelected = false;
+		if(p != null){
+			isSelected = p.getSessions().contains(e);
+		}
 		description = e.getDescription();
 		startTimeString = (startTime+"");
 		startTimeString = startTimeString.substring(0, startTimeString.length()-2)+":"+startTimeString.substring(startTimeString.length()-2);
