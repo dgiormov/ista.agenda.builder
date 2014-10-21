@@ -414,5 +414,16 @@ Including one of the most popular sessions on ISTA 2013 - \"Lets Play The Game O
       "email": "",
 	  "twitter": "",
 	  "bio": "Georgi Peshterski has over 10 years of professional experience in software development and test automation.  He is an active contributor to the testing framework projects and innovation initiatives at VMware."
+    },
+	{
+      "id": "pmanev",
+      "name": "Petar Manev",
+	  "company": "eCommera",
+	  "country": "Bulgaria",
+	  "city": "Sofia",
+	  "job_title": "Senior QA Engineer",
+      "email": "",
+	  "twitter": "",
+	  "bio": "Georgi Peshterski has over 10 years of professional experience in software development and test automation.  He is an active contributor to the testing framework projects and innovation initiatives at VMware."
     }
  ]

@@ -56,7 +56,7 @@ Topics covered in the presentation:
 },
 {
   "id": 13,
-  "name": "TRANSFORM AUTOMATED WEBSERVICE TEST FRAMEWORK INTO A FUZZY ENGINE FOR PROBING LOGICAL FLAWS",
+  "name": "Transform automated webservice test framework into a fuzzy engine for probing logical flaws",
   "type": "hands-on",
   "speakers": [
     {
@@ -356,7 +356,7 @@ I’m going to show you a novel way of measuring JavaScript performance by makin
 },
 {
   "id": 111,
-  "name": "Bandwidth doesn't matter: why network delay will always limit web performance and what to do about it",
+  "name": "Get prepared for the future with “Testing of Single Page Web Applications”",
   "type": "session",
   "speakers": [
     {
@@ -374,15 +374,10 @@ I’m going to show you a novel way of measuring JavaScript performance by makin
   "startTimeString": "11:00",
   "duration": 60,
   "isSelected": false,
-  "description": "Many people think more bandwidth is the answer to the question of how to speed up website load time, but due to the request-response nature of the HTTP protocol, page-load time will always be a minimum of the number of items multiplied by the network delay between client and server. Even infinite bandwidth will not make things faster than the fundamental limit dictated by network delay. 
-
-This talk will highlight some of the problems with the current HTTP protocol, like its sensitivity to network delay and how that has affected both web development and browser/client evolution, making people create lots of imaginative workarounds for a protocol that was designed in another era, when web sites and pages were small and simple. 
-
-We will show exactly how network delay affects performance for the \"chatty\" protocol that is HTTP, how browsers try to counter the negative effects by parallelizing downloads, and how that in turn causes problems on the server side and sometimes in the network. 
-
-This presentation will explain the relationship between page load times and network delay, why bandwidth often doesn't matter, and discuss how modern browsers use parallel TCP connections in order to get around the network delay problem and speed up page load time. 
-
-We will also discuss what happens in the future, especially with the introduction of HTTP2, which will totally change the rules, and explore this new version from a performance perspective.",
+  "description": "I want to share my experience with building single page applications and the specific challenges we've had in the development and testing process.
+Single page application are becoming very common these days, as more and more services that used to be desktop based are moved to the web - ex. administration panels, on-line games, SaaS, etc. - and even entire operating systems are being built with the purpose of working with web applications (ChromeOS), or entirely with web technologies (FirefoxOS).
+Because of their special nature, SPAs differ a lot from the standard web page. Standard web testing techniques and tools do not work - automation, performance and SEO bring a lot of challenges and require a different mind set. Selenium won't do the job for automation and performance tools like YSlow! and PageSpeed just won't give you the correct results. There are also some special testing needs, that did not exist in the normal web pages - ex. testing for memory and CPU leaks and performance degradation overtime.
+My presentation would cover how to tackle, automate and overcome all these problems and succeed in building and testing good single page applications.",
   "hasSecret": false
 },
 {
@@ -391,7 +386,7 @@ We will also discuss what happens in the future, especially with the introductio
   "type": "session",
   "speakers": [
     {
-      "id": "dsimov"
+      "id": "pmanev"
     }
   ],
   "room": "Track B",
@@ -415,11 +410,14 @@ This talk will take a look at messages and will:
 },
 {
   "id": 113,
-  "name": "To SPA or not to SPA?",
+  "name": "Automating the testing of Charts",
   "type": "session",
   "speakers": [
     {
-      "id": "bmihaylov"
+      "id": "iivanov"
+    },
+	{
+      "id": "gpeshterski"
     }
   ],
   "room": "Track C",
@@ -433,7 +431,8 @@ This talk will take a look at messages and will:
   "startTimeString": "11:00",
   "duration": 60,
   "isSelected": false,
-  "description": "Single-page applications (SPA) continue to break the ice of the traditional web applications. Some companies are building all their projects as SPAs without even thinking about possible setbacks. Others (including developers, UX, and also the customers) do not really see the advantages of this new concept and are scared to implement it. In this talk I will try to provide more evidence in what SPAs actually are, why there are here today and how we can use the best parts of what they promise us. I will begin with a short historical overview of web applications and then will talk about pros & cons of SPAs. The most important part will be about when to use them and when not to use them. Although it is subjective to a certain degree, this will give companies a better perception of what they can achieve with this web concept. If time permits, I will briefly talk about how SPAs work together with search-engine optimization and page tracking systems (e.g., Google)",
+  "description": "We will start with an introduction of the problem - why do we need to test charts and how ineffective that is when done manually. Then we will look into the options for automation and present a small library called “Chart Recognition Library” (CRE). The CRE library can do OCR-like parsing of different charts and return chart values presented in alphanumeric format.
+We will talk about the common problems that you can face when implementing *any* chart recognition library, and show some ways to resolve them. We will also demonstrate a way of using that library for end-to-end and data correctness testing.",
   "hasSecret": false
 },
 {
@@ -462,11 +461,11 @@ As part of the presentation a practical case study of evolutionary testing appli
 },
 {
   "id": 122,
-  "name": "Calibrate your Mobile Performancetesting",
+  "name": "Automation Testing Legacy Applications - The Good, The Bad, and the Ugly",
   "type": "session",
   "speakers": [
     {
-      "id": "rleusden"
+      "id": "eslavov"
     }
   ],
   "room": "Track B",
@@ -480,7 +479,7 @@ As part of the presentation a practical case study of evolutionary testing appli
   "startTimeString": "12:00",
   "duration": 60,
   "isSelected": false,
-  "description": "In the seventies English rock band \"The Who\" recorded a song named \"Going Mobile\". Their song Going Mobile was about being traveling with a Mobile home to see new places and meet people. Nowadays, Going Mobile means a lot more, a business today that isn't going mobile is losing to a competitor that is. Today's world is fast, demanding and your mobile application is facing high expectations from users. Performance testing has to adapt to these challenges to serve the need for testing performance on mobile devices. You need to have in-depth knowledge about the environment you are testing against and how to calibrate your performance test tooling to get production like results. Through the session, years of performance testing experiences and research will be shared and examples given of real-world IT industry performance testing.",
+  "description": "Everyone loves to work on a greenfield project. You can choose language, architecture, design from scratch, all the new sexy stuff. The reality is that software engineers at some point need to work on or support legacy applications. It’s alive because it has some business value. The code is so messed up (“I just need to add one more ‘if’ to this method”), and the whole thing is held together by spit and baling wire. There are no automated tests safety net. Every change requires manual tests and a prayer to the software gods. This talk will show you how to start small and work your way up to the point where you reach a confident state. It will show you how to optimise for the team happiness. It will affect topics such as, unit testing, acceptance tests, static code analysis, continuous integration, architecture for testability. The talk is inspired by real life experience, working on three legacy projects in the span of more than four years.",
   "hasSecret": false
 },
 {
@@ -566,11 +565,11 @@ Yes, autonomous software systems are there to solve this problem. They can analy
 },
 {
   "id": 133,
-  "name": "Automation Testing Legacy Applications - The Good, The Bad, and the Ugly",
+  "name": "To SPA or not to SPA?",
   "type": "session",
   "speakers": [
     {
-      "id": "eslavov"
+      "id": "bmihaylov"
     }
   ],
   "room": "Track C",
@@ -584,7 +583,7 @@ Yes, autonomous software systems are there to solve this problem. They can analy
   "startTimeString": "14:00",
   "duration": 60,
   "isSelected": false,
-  "description": "Everyone loves to work on a greenfield project. You can choose language, architecture, design from scratch, all the new sexy stuff. The reality is that software engineers at some point need to work on or support legacy applications. It’s alive because it has some business value. The code is so messed up (“I just need to add one more ‘if’ to this method”), and the whole thing is held together by spit and baling wire. There are no automated tests safety net. Every change requires manual tests and a prayer to the software gods. This talk will show you how to start small and work your way up to the point where you reach a confident state. It will show you how to optimise for the team happiness. It will affect topics such as, unit testing, acceptance tests, static code analysis, continuous integration, architecture for testability. The talk is inspired by real life experience, working on three legacy projects in the span of more than four years.",
+  "description": "Single-page applications (SPA) continue to break the ice of the traditional web applications. Some companies are building all their projects as SPAs without even thinking about possible setbacks. Others (including developers, UX, and also the customers) do not really see the advantages of this new concept and are scared to implement it. In this talk I will try to provide more evidence in what SPAs actually are, why there are here today and how we can use the best parts of what they promise us. I will begin with a short historical overview of web applications and then will talk about pros & cons of SPAs. The most important part will be about when to use them and when not to use them. Although it is subjective to a certain degree, this will give companies a better perception of what they can achieve with this web concept. If time permits, I will briefly talk about how SPAs work together with search-engine optimization and page tracking systems (e.g., Google)",
   "hasSecret": false
 },
 {
@@ -708,7 +707,7 @@ In this talk we will consider the use of formal methods in QE processes. Formal 
 },
 {
   "id": 152,
-  "name": "A Star-fleet science officer chats up an Egyptian goddess in a jazz club on the Moon... or Groovy Browser Automation",
+  "name": "A Starfleet science officer chats up an Egyptian goddess in a jazz club on the Moon... or Groovy Browser Automation",
   "type": "session",
   "speakers": [
     {
@@ -834,14 +833,11 @@ There will be lots of scientific data, best practices, example of incentive base
 },
 {
   "id": 163,
-  "name": "Automating the testing of Charts",
+  "name": "Bandwidth doesn't matter: why network delay will always limit web performance and what to do about it",
   "type": "session",
   "speakers": [
     {
-      "id": "iivanov"
-    },
-	{
-      "id": "gpeshterski"
+      "id": "rlönn"
     }
   ],
   "room": "Track C",
@@ -851,12 +847,19 @@ There will be lots of scientific data, best practices, example of incentive base
   "tags": [
     ""
   ],
-  "startTime": 1400,
-  "startTimeString": "14:00",
+  "startTime": 1700,
+  "startTimeString": "17:00",
   "duration": 60,
   "isSelected": false,
-  "description": "We will start with an introduction of the problem - why do we need to test charts and how ineffective that is when done manually. Then we will look into the options for automation and present a small library called “Chart Recognition Library” (CRE). The CRE library can do OCR-like parsing of different charts and return chart values presented in alphanumeric format.
-We will talk about the common problems that you can face when implementing *any* chart recognition library, and show some ways to resolve them. We will also demonstrate a way of using that library for end-to-end and data correctness testing.",
+  "description": "Many people think more bandwidth is the answer to the question of how to speed up website load time, but due to the request-response nature of the HTTP protocol, page-load time will always be a minimum of the number of items multiplied by the network delay between client and server. Even infinite bandwidth will not make things faster than the fundamental limit dictated by network delay. 
+
+This talk will highlight some of the problems with the current HTTP protocol, like its sensitivity to network delay and how that has affected both web development and browser/client evolution, making people create lots of imaginative workarounds for a protocol that was designed in another era, when web sites and pages were small and simple. 
+
+We will show exactly how network delay affects performance for the \"chatty\" protocol that is HTTP, how browsers try to counter the negative effects by parallelizing downloads, and how that in turn causes problems on the server side and sometimes in the network. 
+
+This presentation will explain the relationship between page load times and network delay, why bandwidth often doesn't matter, and discuss how modern browsers use parallel TCP connections in order to get around the network delay problem and speed up page load time. 
+
+We will also discuss what happens in the future, especially with the introduction of HTTP2, which will totally change the rules, and explore this new version from a performance perspective.",
   "hasSecret": false
 },
 {
