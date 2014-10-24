@@ -3,6 +3,7 @@ package auth.login;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import persistency.exposed.LoggedUserExposed.LinkedInUserInfoJson;
 import service.rest.wrappers.OidClaimSetJsonObject;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 import auth.openidconnect.ApplicationException;
 import auth.openidconnect.OAuthParams;
@@ -53,24 +55,31 @@ import com.google.gson.Gson;
 public class RedirectServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+//	@Override
+//	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+//			throws ServletException, IOException {
+//		OAuthParams oauthParams = new OAuthParams();
+//		oauthParams.setAccessToken(req.getHeader(Utils.ACCESS_TOKEN_SESSION_KEY));
+//		oauthParams.setApplication(Utils.GOOGLE.toLowerCase());
+//		initOrCreateUser(req, resp, oauthParams);
+//		
+//		
+//		super.doPost(req, resp);
+//	}
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Twitter twitter = (Twitter) request.getSession().getAttribute(Utils.TWITTER);
 		String provider = null;
-		if(twitter != null){
+		if(twitter != null && request.getHeader("origin") != null && request.getHeader("origin").contains("twitter")){
 			provider = Utils.TWITTER;
 			RequestToken requestToken = (RequestToken) request.getSession().getAttribute("requestToken");
 			String verifier = request.getParameter("oauth_verifier");
 			try {
-				twitter.getOAuthAccessToken(requestToken, verifier);
+				AccessToken authAccessToken = twitter.getOAuthAccessToken(requestToken, verifier);
 				request.getSession().removeAttribute("requestToken");
-			} catch (TwitterException e) {
-				throw new ServletException(e);
-			}
-			try {
-				initOrCreateUserTwitter(request, response, twitter);
+				initOrCreateUserTwitter(request, response, twitter, authAccessToken);
 			} catch (TwitterException e) {
 				throw new ServletException(e);
 			}
@@ -132,21 +141,23 @@ public class RedirectServlet extends HttpServlet {
 	}
 
 	private void initOrCreateUserTwitter(HttpServletRequest request,
-			HttpServletResponse response, Twitter twitter) throws TwitterException, IOException {
+			HttpServletResponse response, Twitter twitter, AccessToken authAccessToken) throws TwitterException, IOException {
 		String screenName = twitter.getScreenName();
 		long id = twitter.getId();
 		UserInfoJson result = new UserInfoJson();
 		result.setEmail(screenName);
 		result.setName(id+"");
+		result.setAccessToken(authAccessToken.getToken());
+		result.setSecretAccessToken(authAccessToken.getTokenSecret());
 		LoggedUserExposed lue = new LoggedUserExposed();
 		LoggedUser findPersonByOpenId = lue.createNewUser(Utils.TWITTER, result);
 		//backup 60 min
 		findPersonByOpenId.setSessionExpires(60*60);
 		lue.updateEntity(findPersonByOpenId);
-		request.getSession().setAttribute("uid", findPersonByOpenId.getId());
+		request.getSession().setAttribute(Utils.ACCESS_TOKEN_SESSION_KEY, findPersonByOpenId.getAccessToken());
 	}
 
-	public void initToken(OAuthParams oauthParams,
+	private void initToken(OAuthParams oauthParams,
 			HttpServletRequest req, HttpServletResponse response) throws OAuthSystemException, IOException, ServletException {
 
 		try {
@@ -197,19 +208,7 @@ public class RedirectServlet extends HttpServlet {
 			oauthParams.setRefreshToken(Utils.isIssued(oauthResponse.getRefreshToken()));
 
 			if (Utils.GOOGLE.equalsIgnoreCase(app)){
-				OpenIdConnectResponse openIdConnectResponse = ((OpenIdConnectResponse)oauthResponse);
-				JWT idToken = openIdConnectResponse.getIdToken();
-				oauthParams.setIdToken(idToken.getRawString());
-
-				oauthParams.setHeader(new JWTHeaderWriter().write(idToken.getHeader()));
-				oauthParams.setClaimsSet(new JWTClaimsSetWriter().write(idToken.getClaimsSet()));
-
-				URL url = new URL(oauthParams.getTokenEndpoint());
-
-				oauthParams.setIdTokenValid(openIdConnectResponse.checkId(url.getHost(), oauthParams.getClientId()));
-				if(!oauthParams.isIdTokenValid()){
-					throw new ServletException("Failed to authenticate");
-				}
+				fetchUserDataFromGoogle(oauthParams, oauthResponse);
 			}
 			initOrCreateUser(req, response, oauthParams);
 		} catch (ApplicationException e) {
@@ -224,6 +223,23 @@ public class RedirectServlet extends HttpServlet {
 			sb.append("State: ").append(e.getState()).append("</br>");
 			oauthParams.setErrorMessage(sb.toString());
 			throw new ServletException(sb.toString());
+		}
+	}
+	private void fetchUserDataFromGoogle(OAuthParams oauthParams,
+			OAuthAccessTokenResponse oauthResponse)
+			throws MalformedURLException, ServletException {
+		OpenIdConnectResponse openIdConnectResponse = ((OpenIdConnectResponse)oauthResponse);
+		JWT idToken = openIdConnectResponse.getIdToken();
+		oauthParams.setIdToken(idToken.getRawString());
+
+		oauthParams.setHeader(new JWTHeaderWriter().write(idToken.getHeader()));
+		oauthParams.setClaimsSet(new JWTClaimsSetWriter().write(idToken.getClaimsSet()));
+
+		URL url = new URL(oauthParams.getTokenEndpoint());
+
+		oauthParams.setIdTokenValid(openIdConnectResponse.checkId(url.getHost(), oauthParams.getClientId()));
+		if(!oauthParams.isIdTokenValid()){
+			throw new ServletException("Failed to authenticate");
 		}
 	}
 
@@ -260,6 +276,7 @@ public class RedirectServlet extends HttpServlet {
 					userInfoJson = assembleUserInfoFromFacebook(g, userInfoString);
 				}
 			}
+			userInfoJson.setAccessToken(oauthParams.getAccessToken());
 			findPersonByOpenId = lue.createNewUser(oauthParams.getApplication(), userInfoJson);
 		}
 		if(fromJson != null){
@@ -270,8 +287,9 @@ public class RedirectServlet extends HttpServlet {
 			//backup 60 min
 			findPersonByOpenId.setSessionExpires(60*60);
 		}
+		findPersonByOpenId.setAccessToken(oauthParams.getAccessToken());
 		lue.updateEntity(findPersonByOpenId);
-		request.getSession().setAttribute("uid", findPersonByOpenId.getId());
+		request.getSession().setAttribute(Utils.ACCESS_TOKEN_SESSION_KEY, findPersonByOpenId.getAccessToken());
 	}
 
 	private UserInfoJson assembleUserInfo(Gson g, String userInfoString,

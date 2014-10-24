@@ -8,6 +8,9 @@ public class UserInfoJson {
 	private String picture;
 	private String email;
 	
+	private String accessToken;
+	private String secretAccessToken;
+	
 	public String getId() {
 		return id;
 	}
@@ -43,5 +46,17 @@ public class UserInfoJson {
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	public String getAccessToken() {
+		return accessToken;
+	}
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
+	public String getSecretAccessToken() {
+		return secretAccessToken;
+	}
+	public void setSecretAccessToken(String secretAccessToken) {
+		this.secretAccessToken = secretAccessToken;
 	}
 }

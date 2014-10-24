@@ -20,19 +20,13 @@ public class IsUserLogged extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Long attribute = (Long) request.getSession().getAttribute("uid");
-		if(attribute != null){
 			LoggedUserExposed lue = new LoggedUserExposed();
-			LoggedUser personById = lue.findPersonById(attribute+"");
+			LoggedUser personById = lue.getCurrentUser(request);
 			if(personById != null){
-				if(personById.isSessionExpired()){
-					response.sendError(440);
+				if(!personById.isSessionExpired()){
+					return;
 				}
-			} else {
-				response.sendError(401);
-			}
-		} else {
+			} 
 			response.sendError(401);
-		}
 	}
 }

@@ -40,7 +40,7 @@ import utils.Status.STATE;
 		@NamedQuery(name = "getPersonByEmail", query = "SELECT e FROM LoggedUser e WHERE e.email = :email"),
 		@NamedQuery(name = "getPersonByUserName", query = "SELECT e FROM LoggedUser e WHERE e.userName = :userName"),
 		@NamedQuery(name = "getAllPersons", query = "SELECT e FROM LoggedUser e"),
-		@NamedQuery(name = "getPersonByTwiiterId", query = "SELECT e FROM LoggedUser e WHERE e.secretAccess = :tAccess AND e.accessToken = :tSAccess") })
+		@NamedQuery(name = "getPersonByAccessToken", query = "SELECT e FROM LoggedUser e WHERE e.accessToken = :aToken") })
 public class LoggedUser implements Serializable {
 
 	@Id
@@ -57,7 +57,7 @@ public class LoggedUser implements Serializable {
 	
 	private long sessionExpires;
 
-	@Index
+	@Index(unique=true)
 	private String accessToken;
 	@Index
 	private String secretAccess;
@@ -329,6 +329,22 @@ public class LoggedUser implements Serializable {
 
 	public void setOpenId(String openId) {
 		this.openId = openId;
+	}
+
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
+
+	public String getSecretAccess() {
+		return secretAccess;
+	}
+
+	public void setSecretAccess(String secretAccess) {
+		this.secretAccess = secretAccess;
 	}
 
 }

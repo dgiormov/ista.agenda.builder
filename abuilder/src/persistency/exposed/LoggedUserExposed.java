@@ -9,6 +9,7 @@ import javax.persistence.Query;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import auth.openidconnect.Utils;
 import persistency.entities.LoggedUser;
 import utils.Constants;
 import utils.DBUtils;
@@ -50,21 +51,9 @@ public class LoggedUserExposed {
 		return result;
 	}
 	
-	public LoggedUser findPersonByMail(String email) {
-		Query namedQuery = entityManager.createNamedQuery("getPersonByEmail");
-		namedQuery.setParameter("email", email);
-		LoggedUser result = null;
-		try {
-			result = (LoggedUser) namedQuery.getSingleResult();
-		} catch (NoResultException e) {
-			result = null;
-		}
-		return result;
-	}
-	
-	public LoggedUser findPersonByUserName(String username) {
-		Query namedQuery = entityManager.createNamedQuery("getPersonByUserName");
-		namedQuery.setParameter("userName", username);
+	public LoggedUser findPersonByAccessToken(String aToken) {
+		Query namedQuery = entityManager.createNamedQuery("getPersonByAccessToken");
+		namedQuery.setParameter("aToken", aToken);
 		LoggedUser result = null;
 		try {
 			result = (LoggedUser) namedQuery.getSingleResult();
@@ -91,35 +80,19 @@ public class LoggedUserExposed {
 		if(user != null){
 			return user;
 		}	
-		return getCookieUser(request);
+		return null;
 	}
 
-	private LoggedUser getCookieUser(HttpServletRequest request) {
-		Cookie[] cookies = request.getCookies();
-		String id = null;
-		if (cookies == null || cookies.length == 0) {
-			return null;
-		} else {
-			for (Cookie cookie : cookies) {
-				if (Constants.COOKIE_NAME.equals(cookie.getName())) {
-					id = cookie.getValue();
-					break;
-				}
-			}
-			if (id == null) {
-				return null;
-			}
-		}
-		return findPersonById(id);
-	}
-	
 	private LoggedUser getLoggedUser(HttpServletRequest request) {
 //			user = getUser(request.getUserPrincipal());
-			Object attribute = request.getSession().getAttribute("uid");
+			Object attribute = request.getSession().getAttribute(Utils.ACCESS_TOKEN_SESSION_KEY);
 			if(attribute == null){
+				if(request.getHeader(Utils.ACCESS_TOKEN_SESSION_KEY) != null){
+					attribute = request.getHeader(Utils.ACCESS_TOKEN_SESSION_KEY);
+				}
 				return null;
 			}
-			return findPersonById(attribute.toString());
+			return findPersonByAccessToken(attribute.toString());
 	}
 	
 	public LoggedUser findPersonByOpenId(String openId) {
@@ -144,11 +117,15 @@ public class LoggedUserExposed {
 		//Some IDP require additional request to get the email, so we have to absolutely sure that the person is not registered 
 		LoggedUser findPersonByOpenId = findPersonByOpenId(openId);
 		if(findPersonByOpenId != null){
+			findPersonByOpenId.setAccessToken(userInfo.getAccessToken());
+			findPersonByOpenId.setSecretAccess(userInfo.getSecretAccessToken());
 			return findPersonByOpenId;
 		}
 		lu.setOpenId(openId);
 		if(userInfo != null){
 			lu.setName(userInfo.getName());
+			lu.setAccessToken(userInfo.getAccessToken());
+			lu.setSecretAccess(userInfo.getSecretAccessToken());
 		}
 		createEntity(lu);
 		return lu;

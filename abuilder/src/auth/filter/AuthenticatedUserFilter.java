@@ -54,9 +54,11 @@ public class AuthenticatedUserFilter implements Filter {
 
 		// pass the request along the filter chain
 		if(HttpServletRequest.class.isInstance(request)){
-			if(!((HttpServletRequest) request).getMethod().equals("GET") && user == null){
-				((HttpServletResponse)response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
-				return;
+			if(!((HttpServletRequest) request).getMethod().equals("GET")) {
+				if(user == null || currentUser.isSessionExpired()){
+					((HttpServletResponse)response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "This operation requires login");
+					return;	
+				}
 			}
 		}
 		next.doFilter(new UserPrincipalRequestWrapper(user, getRolesForUser(user), request), response);

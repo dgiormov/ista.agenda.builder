@@ -35,6 +35,8 @@ public final class Utils {
 
 	public static final String COOKIE_PROVIDER_NAME = "login_provider";
 
+	public static final String ACCESS_TOKEN_SESSION_KEY = "accesstoken";
+
     public static String getClientId(String app, HttpServletRequest request){
     	ProviderData provider = getProvider(app, request);
     	String host = request.getServerName();

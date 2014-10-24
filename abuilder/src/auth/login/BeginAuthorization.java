@@ -35,6 +35,11 @@ public class BeginAuthorization extends HttpServlet {
 			if(providerName == null){
 				response.sendError(400);
 			}
+			String clientId = Utils.getClientId(providerName, request);
+			if(clientId == null || clientId.length() == 0){
+				response.sendError(401, "Login Provider is not configured");
+				return;
+			}
 			if(providerName.equals(Utils.TWITTER)){
 				authorizeWithTwitter(request, response);
 			} else {
