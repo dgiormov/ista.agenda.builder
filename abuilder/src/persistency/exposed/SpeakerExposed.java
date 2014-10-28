@@ -3,6 +3,7 @@ package persistency.exposed;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -24,18 +25,20 @@ public class SpeakerExposed {
 		if (findUserById(e.getId()) != null) {
 			return;
 		}
-		entityManager.getTransaction().begin();
+		EntityTransaction transaction = entityManager.getTransaction();
+		transaction.begin();
 		entityManager.persist(e);
-		entityManager.getTransaction().commit();
+		transaction.commit();
 
 	}
 
 	public void updateEntity(Speaker e) {
 		Speaker findUserById = findUserById(e.getId());
 		if (findUserById != null) {
-			entityManager.getTransaction().begin();
+			EntityTransaction transaction = entityManager.getTransaction();
+			transaction.begin();
 			entityManager.persist(e);
-			entityManager.getTransaction().commit();
+			transaction.commit();
 		}
 
 	}

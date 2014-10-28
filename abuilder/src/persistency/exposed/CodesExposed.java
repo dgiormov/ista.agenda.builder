@@ -3,6 +3,7 @@ package persistency.exposed;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
 import persistency.entities.Code;
@@ -21,22 +22,19 @@ public class CodesExposed {
 	}
 
 	public void createEntity(Code e) {
-		entityManager.getTransaction().begin();
+		EntityTransaction transaction = entityManager.getTransaction();
+		transaction.begin();
 		entityManager.persist(e);
-		entityManager.getTransaction().commit();
+		transaction.commit();
 	}
 	
 	public void updateEntity(Code e) {
-		entityManager.getTransaction().begin();
+		EntityTransaction transaction = entityManager.getTransaction();
+		transaction.begin();
 		entityManager.merge(e);
-		entityManager.getTransaction().commit();
+		transaction.commit();
 	}
 	
-	public void updateEntityRAW(Code e) {
-		entityManager.merge(e);
-		entityManager.getTransaction().commit();
-	}
-
 	public List<Code> allCodes() {
 		Query namedQuery = entityManager.createNamedQuery("allCodes");
 		List<Code> codeList = namedQuery.getResultList();
@@ -66,8 +64,9 @@ public class CodesExposed {
 	}
 	
 	public void deleteEntity(Code e) {
-		entityManager.getTransaction().begin();
+		EntityTransaction transaction = entityManager.getTransaction();
+		transaction.begin();
 		entityManager.remove(e);
-		entityManager.getTransaction().commit();
+		transaction.commit();
 	}
 }

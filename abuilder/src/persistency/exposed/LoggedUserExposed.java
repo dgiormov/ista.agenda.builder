@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.servlet.http.Cookie;
@@ -22,21 +23,24 @@ public class LoggedUserExposed {
 	}
 
 	public void createEntity(LoggedUser e) {
-		entityManager.getTransaction().begin();
+		EntityTransaction transaction = entityManager.getTransaction();
+		transaction.begin();
 		entityManager.persist(e);
-		entityManager.getTransaction().commit();
+		transaction.commit();
 	}
 
 	public void deleteEntity(LoggedUser e) {
-		entityManager.getTransaction().begin();
+		EntityTransaction transaction = entityManager.getTransaction();
+		transaction.begin();
 		entityManager.remove(e);
-		entityManager.getTransaction().commit();
+		transaction.commit();
 	}
 
 	public void updateEntity(LoggedUser e) {
-		entityManager.getTransaction().begin();
+		EntityTransaction transaction = entityManager.getTransaction();
+		transaction.begin();
 		entityManager.merge(e);
-		entityManager.getTransaction().commit();
+		transaction.commit();
 	}
 
 	public LoggedUser findPersonById(String id) {
@@ -90,6 +94,13 @@ public class LoggedUserExposed {
 				if(request.getHeader(Utils.ACCESS_TOKEN_SESSION_KEY) != null){
 					attribute = request.getHeader(Utils.ACCESS_TOKEN_SESSION_KEY);
 				}
+				if(attribute == null){
+					if(request.getHeader(Utils.ACCESS_TOKEN_SESSION_KEY.toLowerCase()) != null){
+						attribute = request.getHeader(Utils.ACCESS_TOKEN_SESSION_KEY.toLowerCase());
+					}
+				}
+			}
+			if(attribute == null){
 				return null;
 			}
 			return findPersonByAccessToken(attribute.toString());

@@ -1,12 +1,18 @@
 package persistency.entities;
 
+import java.util.List;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 @NamedQueries({
 	@NamedQuery(name = "allComments", query = "SELECT e FROM Comment e WHERE e.event.id = :id"),
@@ -29,6 +35,10 @@ public class Comment {
 	
 	private LoggedUser cowner;
 	
+	@ManyToMany
+	private List<LoggedUser> likedBy;
+	
+	@Transient
 	private int likes = 0;
 
 	public int getId() {
@@ -72,15 +82,7 @@ public class Comment {
 	}
 
 	public int getLikes() {
-		return likes;
-	}
-	
-	public void incLikes(){
-		likes +=1;
-	}
-
-	public void setLikes(int likes) {
-		this.likes = likes;
+		return getLikedBy()==null?0:getLikedBy().size();
 	}
 	
 	@Override
@@ -100,5 +102,13 @@ public class Comment {
 	@Override
 	public String toString() {
 		return "Text: "+ text + " likes: "+likes;
+	}
+
+	public List<LoggedUser> getLikedBy() {
+		return likedBy;
+	}
+
+	public void setLikedBy(List<LoggedUser> likedBy) {
+		this.likedBy = likedBy;
 	}
 }

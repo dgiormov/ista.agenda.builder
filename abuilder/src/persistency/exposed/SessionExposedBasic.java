@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
@@ -27,15 +28,17 @@ public class SessionExposedBasic {
 	}
 
 	public void createEntity(Session e) {
-		entityManager.getTransaction().begin();
-			entityManager.persist(e);
-			entityManager.getTransaction().commit();
+		EntityTransaction transaction = entityManager.getTransaction();
+		transaction.begin();
+		entityManager.persist(e);
+		transaction.commit();
 	}
 	
 	public void updateEntity(Session e) {
-		entityManager.getTransaction().begin();
-			entityManager.merge(e);
-			entityManager.getTransaction().commit();
+		EntityTransaction transaction = entityManager.getTransaction();
+		transaction.begin();
+		entityManager.merge(e);
+		transaction.commit();
 	}
 
 	public List<SessionBasic> allEntities(HttpServletRequest request) {
@@ -127,7 +130,8 @@ public class SessionExposedBasic {
 	}
 
 	public Session findEventById(String id) {
-		entityManager.getTransaction().begin();
+		EntityTransaction transaction = entityManager.getTransaction();
+		transaction.begin();
 		Session result = null;
 		try {
 			Query namedQuery = entityManager.createNamedQuery("getEventById");
@@ -138,13 +142,14 @@ public class SessionExposedBasic {
 				result = null;
 			}
 		} finally {
-			entityManager.getTransaction().commit();
+			transaction.commit();
 		}
 		return result;
 	}
 	
 	public SessionWrapped findEventByIdWrapped(String id, LoggedUser p) {
-		entityManager.getTransaction().begin();
+		EntityTransaction transaction = entityManager.getTransaction();
+		transaction.begin();
 		Session result = null;
 		try {
 			Query namedQuery = entityManager.createNamedQuery("getEventById");
@@ -155,7 +160,7 @@ public class SessionExposedBasic {
 				result = null;
 			}
 		} finally {
-			entityManager.getTransaction().commit();
+			transaction.commit();
 		}
 		return new SessionWrapped(result, p);
 	}

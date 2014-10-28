@@ -16,14 +16,15 @@ public class CommentBasic {
 	private String text;
 	private int likes;
 	private String likedBy;
+	private boolean likedByMe;
 
-	public CommentBasic(Comment c) {
+	public CommentBasic(Comment c, boolean likedByMe) {
 		id = c.getId();
 		name = c.getCowner().getName();
-//		name = "noname";
 		text = c.getText();
+//		likedBy = fetchPeople(c);
 		likes = c.getLikes();
-		likedBy = fetchPeople(c);
+		this. likedByMe = likedByMe;  
 	}
 
 	private String fetchPeople(Comment c) {

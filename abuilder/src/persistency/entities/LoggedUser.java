@@ -17,6 +17,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -81,7 +82,7 @@ public class LoggedUser implements Serializable {
 	@OneToMany(mappedBy="enteredBy")
 	private List<Code> codes = new ArrayList<Code>();
 	
-	@OneToMany
+	@ManyToMany(mappedBy="likedBy")
 	private List<Comment> likedComments = new ArrayList<Comment>();
 	
 	@OneToMany(mappedBy="cowner")
@@ -312,7 +313,7 @@ public class LoggedUser implements Serializable {
 	}
 	
 	public boolean isSessionExpired(){
-		return System.currentTimeMillis() - getSessionExpires()*1000 > 0;
+		return System.currentTimeMillis() - getSessionExpires() > 0;
 	}
 
 	public long getSessionExpires() {

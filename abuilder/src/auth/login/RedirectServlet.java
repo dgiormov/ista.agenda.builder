@@ -55,89 +55,83 @@ import com.google.gson.Gson;
 public class RedirectServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-//	@Override
-//	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-//			throws ServletException, IOException {
-//		OAuthParams oauthParams = new OAuthParams();
-//		oauthParams.setAccessToken(req.getHeader(Utils.ACCESS_TOKEN_SESSION_KEY));
-//		oauthParams.setApplication(Utils.GOOGLE.toLowerCase());
-//		initOrCreateUser(req, resp, oauthParams);
-//		
-//		
-//		super.doPost(req, resp);
-//	}
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Twitter twitter = (Twitter) request.getSession().getAttribute(Utils.TWITTER);
-		String provider = null;
-		if(twitter != null && request.getHeader("origin") != null && request.getHeader("origin").contains("twitter")){
-			provider = Utils.TWITTER;
-			RequestToken requestToken = (RequestToken) request.getSession().getAttribute("requestToken");
-			String verifier = request.getParameter("oauth_verifier");
-			try {
-				AccessToken authAccessToken = twitter.getOAuthAccessToken(requestToken, verifier);
-				request.getSession().removeAttribute("requestToken");
-				initOrCreateUserTwitter(request, response, twitter, authAccessToken);
-			} catch (TwitterException e) {
-				throw new ServletException(e);
+		if(isAlreadyAuthenticatedThroughClient(request)){
+			authThroughClient(request, response);
+			return;
+		} else {
+			Twitter twitter = (Twitter) request.getSession().getAttribute(Utils.TWITTER);
+			String provider = null;
+			if(twitter != null && request.getHeader("origin") != null && request.getHeader("origin").contains("twitter")){
+				provider = Utils.TWITTER;
+				RequestToken requestToken = (RequestToken) request.getSession().getAttribute("requestToken");
+				String verifier = request.getParameter("oauth_verifier");
+				try {
+					AccessToken authAccessToken = twitter.getOAuthAccessToken(requestToken, verifier);
+					request.getSession().removeAttribute("requestToken");
+					initOrCreateUserTwitter(request, response, twitter, authAccessToken);
+				} catch (TwitterException e) {
+					throw new ServletException(e);
+				}
+			} else{
+				OAuthParams oauthParams = new OAuthParams();
+				try {
+					// Get OAuth Info
+					String clientId = Utils.findCookieValue(request, "clientId");
+					String clientSecret = Utils.findCookieValue(request, "clientSecret");
+					String authzEndpoint = Utils.findCookieValue(request, "authzEndpoint");
+					String tokenEndpoint = Utils.findCookieValue(request, "tokenEndpoint");
+					String redirectUri = Utils.findCookieValue(request, "redirectUri");
+					String scope = Utils.findCookieValue(request, "scope");
+					String state = Utils.findCookieValue(request, "state");
+
+
+					oauthParams.setClientId(clientId);
+					oauthParams.setClientSecret(clientSecret);
+					oauthParams.setAuthzEndpoint(authzEndpoint);
+					oauthParams.setTokenEndpoint(tokenEndpoint);
+					oauthParams.setRedirectUri(redirectUri);
+					oauthParams.setScope(Utils.isIssued(scope));
+					oauthParams.setState(Utils.isIssued(state));
+
+					// Create the response wrapper
+					OAuthAuthzResponse oar = null;
+					oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
+
+					// Get Authorization Code
+					String code = oar.getCode();
+					oauthParams.setAuthzCode(code);
+
+					String app = Utils.findCookieValue(request, "app");
+					response.addCookie(new Cookie("app", app));
+					provider = app;
+					oauthParams.setApplication(app);
+					initToken(oauthParams, request, response);
+
+				} catch (OAuthProblemException e) {
+					StringBuffer sb = new StringBuffer();
+					sb.append("</br>");
+					sb.append("Error code: ").append(e.getError()).append("</br>");
+					sb.append("Error description: ").append(e.getDescription()).append("</br>");
+					sb.append("Error uri: ").append(e.getUri()).append("</br>");
+					sb.append("State: ").append(e.getState()).append("</br>");
+					oauthParams.setErrorMessage(sb.toString());
+					throw new ServletException(sb.toString(), e);
+				} catch (OAuthSystemException e) {
+					throw new ServletException(e);
+				}
 			}
-		} else{
-			OAuthParams oauthParams = new OAuthParams();
-			try {
-				// Get OAuth Info
-				String clientId = Utils.findCookieValue(request, "clientId");
-				String clientSecret = Utils.findCookieValue(request, "clientSecret");
-				String authzEndpoint = Utils.findCookieValue(request, "authzEndpoint");
-				String tokenEndpoint = Utils.findCookieValue(request, "tokenEndpoint");
-				String redirectUri = Utils.findCookieValue(request, "redirectUri");
-				String scope = Utils.findCookieValue(request, "scope");
-				String state = Utils.findCookieValue(request, "state");
-
-
-				oauthParams.setClientId(clientId);
-				oauthParams.setClientSecret(clientSecret);
-				oauthParams.setAuthzEndpoint(authzEndpoint);
-				oauthParams.setTokenEndpoint(tokenEndpoint);
-				oauthParams.setRedirectUri(redirectUri);
-				oauthParams.setScope(Utils.isIssued(scope));
-				oauthParams.setState(Utils.isIssued(state));
-
-				// Create the response wrapper
-				OAuthAuthzResponse oar = null;
-				oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
-
-				// Get Authorization Code
-				String code = oar.getCode();
-				oauthParams.setAuthzCode(code);
-
-				String app = Utils.findCookieValue(request, "app");
-				response.addCookie(new Cookie("app", app));
-				provider = app;
-				oauthParams.setApplication(app);
-				initToken(oauthParams, request, response);
-
-			} catch (OAuthProblemException e) {
-				StringBuffer sb = new StringBuffer();
-				sb.append("</br>");
-				sb.append("Error code: ").append(e.getError()).append("</br>");
-				sb.append("Error description: ").append(e.getDescription()).append("</br>");
-				sb.append("Error uri: ").append(e.getUri()).append("</br>");
-				sb.append("State: ").append(e.getState()).append("</br>");
-				oauthParams.setErrorMessage(sb.toString());
-				throw new ServletException(sb.toString(), e);
-			} catch (OAuthSystemException e) {
-				throw new ServletException(e);
-			}
+			createLoginCookie(response, provider);
+			response.sendRedirect(request.getContextPath() + "/");
 		}
-		createLoginCookie(response, provider);
-		response.sendRedirect(request.getContextPath() + "/");
 	}
 
 	private void createLoginCookie(HttpServletResponse response, String provider) {
 		response.addCookie(new Cookie(Utils.COOKIE_PROVIDER_NAME, provider));
-		
+
 	}
 
 	private void initOrCreateUserTwitter(HttpServletRequest request,
@@ -227,7 +221,7 @@ public class RedirectServlet extends HttpServlet {
 	}
 	private void fetchUserDataFromGoogle(OAuthParams oauthParams,
 			OAuthAccessTokenResponse oauthResponse)
-			throws MalformedURLException, ServletException {
+					throws MalformedURLException, ServletException {
 		OpenIdConnectResponse openIdConnectResponse = ((OpenIdConnectResponse)oauthResponse);
 		JWT idToken = openIdConnectResponse.getIdToken();
 		oauthParams.setIdToken(idToken.getRawString());
@@ -257,7 +251,7 @@ public class RedirectServlet extends HttpServlet {
 			String userInfoString = null;
 			String userEmail = null;
 			try {
-				ProviderData data = Utils.getProvider(oauthParams.getApplication(), null);
+				ProviderData data = Utils.getProvider(oauthParams.getApplication(), request);
 				userInfoString = getUserInfoString(oauthParams, data.getUserInfoEndpoint());
 				if(data.getUserEmailEndpoint() != null){
 					userEmail = getUserInfoString(oauthParams, data.getUserEmailEndpoint());
@@ -280,12 +274,12 @@ public class RedirectServlet extends HttpServlet {
 			findPersonByOpenId = lue.createNewUser(oauthParams.getApplication(), userInfoJson);
 		}
 		if(fromJson != null){
-			findPersonByOpenId.setSessionExpires(Long.parseLong(fromJson.getExp()));
+			findPersonByOpenId.setSessionExpires(System.currentTimeMillis() + Long.parseLong(fromJson.getExp()));
 		} else if(oauthParams.getExpiresIn() != null) {
-			findPersonByOpenId.setSessionExpires(oauthParams.getExpiresIn());
+			findPersonByOpenId.setSessionExpires(System.currentTimeMillis() + oauthParams.getExpiresIn());
 		} else {
 			//backup 60 min
-			findPersonByOpenId.setSessionExpires(60*60);
+			findPersonByOpenId.setSessionExpires(System.currentTimeMillis() + 60*60*1000);
 		}
 		findPersonByOpenId.setAccessToken(oauthParams.getAccessToken());
 		lue.updateEntity(findPersonByOpenId);
@@ -369,5 +363,15 @@ public class RedirectServlet extends HttpServlet {
 		return null;
 	}
 
+	private void authThroughClient(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		OAuthParams oauthParams = new OAuthParams();
+		oauthParams.setAccessToken(request.getHeader(Utils.ACCESS_TOKEN_SESSION_KEY));
+		oauthParams.setApplication(request.getHeader("provider"));
+		initOrCreateUser(request, response, oauthParams);	
+	}
+
+	private boolean isAlreadyAuthenticatedThroughClient(HttpServletRequest request){
+		return request.getHeader(Utils.ACCESS_TOKEN_SESSION_KEY) != null && request.getHeader("provider") != null; 
+	}
 
 }

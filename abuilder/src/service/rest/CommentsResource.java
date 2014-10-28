@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
+import javax.persistence.EntityTransaction;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -40,16 +41,17 @@ public class CommentsResource {
 	public CommentsResource() {
 		g = new Gson();
 	}
-	
+
 	@GET
 	@Path("{id}")
-	public Response getCommentsForSession(@PathParam("id") String sessionId){
+	public Response getCommentsForSession(@Context HttpServletRequest request, @PathParam("id") String sessionId){
 		CommentsExposedBasic commetnsExposed = new CommentsExposedBasic();
-		List<CommentBasic> allEntities = commetnsExposed.allEntities(sessionId);
+		LoggedUserExposed lue = new LoggedUserExposed();
+		List<CommentBasic> allEntities = commetnsExposed.allEntities(sessionId, lue.getCurrentUser(request));
 		return Response.status(Response.Status.OK)
 				.entity(g.toJson(allEntities)).build();
 	}
-	
+
 	@POST
 	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -64,9 +66,9 @@ public class CommentsResource {
 		Session event = ee.findEventById(sessionId);
 		LoggedUserExposed pe = new LoggedUserExposed();
 		LoggedUser person = pe.getCurrentUser(request);
-//		if(request.getUserPrincipal() == null){
-//			return Response.status(Status.BAD_REQUEST).build();
-//		}
+		//		if(request.getUserPrincipal() == null){
+		//			return Response.status(Status.BAD_REQUEST).build();
+		//		}
 		if(event == null || person == null){
 			return Response.status(Status.BAD_REQUEST).build();
 		}
@@ -74,19 +76,19 @@ public class CommentsResource {
 		Comment c = new Comment();
 		c.setEvent(event);
 		c.setCowner(person);
-//		c.setInReplyTo(Integer.parseInt(inReplyOf));
+		//		c.setInReplyTo(Integer.parseInt(inReplyOf));
 		c.setText(fromJson.getData());
 		ce.createEntity(c);
 		person.addComment(c);
 		pe.updateEntity(person);
 		return Response.ok().build();
 	}
-	
+
 	@POST
-	@Path("{id}/likes")
-	public Response rateSpeaker(@Context HttpServletRequest request, @PathParam("id") String commentId, @FormParam("eventId") String eventId){
+	@Path("{id}/like")
+	public Response likeUnlike(@Context HttpServletRequest request, @PathParam("id") Integer commentId){
 		if(!AppControl.writeMode()){
-			return Response.status(Status.BAD_REQUEST).build();
+			//			return Response.status(Status.BAD_REQUEST).build();
 		}
 		if(commentId == null){
 			return Response.status(Status.BAD_REQUEST).build();
@@ -96,26 +98,31 @@ public class CommentsResource {
 		if(p != null){
 			CommentsExposedBasic ce = new CommentsExposedBasic();
 			Comment comment = ce.getComment(commentId);
-			if(comment != null && !p.getLikedComments().contains(comment)){
+			if(comment != null){
 				if(comment.getCowner().getId() == p.getId()){
-					return Response.status(Status.NOT_ACCEPTABLE).entity("This is your comment remember?").build();
+					//FIXME do not allow it.
+				} 
+				if(p.getLikedComments().contains(comment)){
+					return Response.status(400).build();
+//					p.getLikedComments().remove(comment);
+//					if(comment.getLikedBy().contains(p)){
+//						comment.getLikedBy().remove(p);
+//					}
+				} else {
+					p.getLikedComments().add(comment);
+					if(!comment.getLikedBy().contains(p)){
+						comment.getLikedBy().add(p);
+					}
 				}
-				p.getLikedComments().add(comment);
 				pe.updateEntity(p);
-				comment.incLikes();
 				ce.updateEntity(comment);
 				LoggedUser cowner = pe.findPersonById(comment.getCowner().getId()+"");
-//				FIXME
-//				cowner.addPoints(ScoreCategories.LIKE_MY_COMMENT, Score.LIKED);
-				if(comment.getLikes() > 3){
-//					cowner.addPoints(ScoreCategories.LIKED_BY5, Score.LIKED5);
-				}
 				pe.updateEntity(cowner);
 			}
 		}
 		return Response.ok().build();
 	}
-	
+
 	@XmlRootElement
 	public class Data {
 		private String data;
@@ -128,5 +135,5 @@ public class CommentsResource {
 			this.data = data;
 		}
 	}
-	
+
 }

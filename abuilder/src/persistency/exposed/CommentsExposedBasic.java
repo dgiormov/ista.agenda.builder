@@ -4,16 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
 import persistency.entities.Comment;
+import persistency.entities.LoggedUser;
 import service.rest.wrappers.CommentBasic;
 import utils.DBUtils;
 
 public class CommentsExposedBasic {
 
 	public EntityManager entityManager = null;
-	
+
 	public static final String JTA_PU_NAME = "statCreateTablesJTA";
 
 	public CommentsExposedBasic() {
@@ -21,50 +23,45 @@ public class CommentsExposedBasic {
 	}
 
 	public void createEntity(Comment e) {
-		entityManager.getTransaction().begin();
-		try {
-			entityManager.persist(e);
-			entityManager.getTransaction().commit();
-		} catch (Exception e1) {
-			entityManager.getTransaction().rollback();
-		}
-	}
-	
-	public void updateEntity(Comment e) {
-		entityManager.getTransaction().begin();
-		try {
-			entityManager.merge(e);
-			entityManager.getTransaction().commit();
-		} catch (Exception e1) {
-			entityManager.getTransaction().rollback();
-		}
+		EntityTransaction transaction = entityManager.getTransaction();
+		transaction.begin();
+		entityManager.persist(e);
+		transaction.commit();
 	}
 
-	public List<CommentBasic> allEntities(String id) {
+	public void updateEntity(Comment e) {
+		EntityTransaction transaction = entityManager.getTransaction();
+		transaction.begin();
+		entityManager.merge(e);
+		transaction.commit();
+	}
+
+	public List<CommentBasic> allEntities(String id, LoggedUser lu) {
 		Query namedQuery = entityManager.createNamedQuery("allComments");
 		namedQuery.setParameter("id", Integer.parseInt(id));
 		List<Comment> commentList = namedQuery.getResultList();
 		List<CommentBasic> result = new ArrayList<CommentBasic>();
 		for (Comment comment : commentList) {
-			result.add(new CommentBasic(comment));
+			entityManager.refresh(comment);
+			result.add(new CommentBasic(comment, lu != null && lu.getLikedComments().contains(comment)));
 		}
 		return result;
 	}
-	
-	public List<CommentBasic> allEntities() {
+
+	public List<CommentBasic> allEntities(LoggedUser lu) {
 		Query namedQuery = entityManager.createNamedQuery("allCommentsRaw");
 		List<Comment> commentList = namedQuery.getResultList();
 		List<CommentBasic> result = new ArrayList<CommentBasic>();
 		for (Comment comment : commentList) {
-			result.add(new CommentBasic(comment));
+			result.add(new CommentBasic(comment, lu != null && lu.getLikedComments().contains(comment)));
 		}
 		return result;
 	}
-	
-	public Comment getComment(String id) {
+
+	public Comment getComment(Integer id) {
 		Query namedQuery = entityManager.createNamedQuery("commentById");
-		namedQuery.setParameter("id", Integer.parseInt(id));
+		namedQuery.setParameter("id", id);
 		return (Comment) namedQuery.getSingleResult();
 	}
-	
+
 }

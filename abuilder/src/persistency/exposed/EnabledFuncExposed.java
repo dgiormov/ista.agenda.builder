@@ -1,6 +1,7 @@
 package persistency.exposed;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
 import persistency.entities.EnabledFunctionality;
@@ -17,9 +18,10 @@ public class EnabledFuncExposed {
 	}
 
 	public void createEntity(EnabledFunctionality e) {
-		entityManager.getTransaction().begin();
+		EntityTransaction transaction = entityManager.getTransaction();
+		transaction.begin();
 		entityManager.merge(e);
-		entityManager.getTransaction().commit();
+		transaction.commit();
 	}
 	
 	public EnabledFunctionality getEntity() {
