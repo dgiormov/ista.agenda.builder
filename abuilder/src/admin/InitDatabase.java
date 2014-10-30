@@ -20,10 +20,12 @@ import org.slf4j.LoggerFactory;
 
 import persistency.entities.Code;
 import persistency.entities.EnabledFunctionality;
+import persistency.entities.LoggedUser;
 import persistency.entities.Session;
 import persistency.entities.Speaker;
 import persistency.exposed.CodesExposed;
 import persistency.exposed.EnabledFuncExposed;
+import persistency.exposed.LoggedUserExposed;
 import persistency.exposed.SessionExposedBasic;
 import persistency.exposed.SpeakerExposed;
 import persistency.exposed.json.SessionJson;
@@ -64,12 +66,13 @@ public class InitDatabase extends HttpServlet {
 			} else if (request.getParameter("reset") != null) {
 				logger.warn("ratings reset");
 				response.getWriter().print("Ratings reset...");
-				//			PersonExposed pe = new PersonExposed();
-				//			List<Person> allPersons = pe.getAllPersons();
-				//			for (Person person : allPersons) {
-				//				person.getEventRatings().clear();
-				//				pe.updateEntity(person);
-				//			}
+				LoggedUserExposed lue = new LoggedUserExposed();
+				List<LoggedUser> allPersons = lue.getAllPersons();
+				for (LoggedUser person : allPersons) {
+					person.getSessionRatings().clear();
+					person.getSpeakerRatings().clear();
+					lue.updateEntity(person);
+				}
 				response.getWriter().print("[FAILED]");
 			} else if (request.getParameter("reread") != null) {
 				logger.warn("Reread event data");

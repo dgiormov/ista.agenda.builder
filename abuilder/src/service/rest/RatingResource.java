@@ -35,7 +35,7 @@ public class RatingResource {
 		if (person == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
-		return rateGeneric(requst, person, rating, eventId, person.getEventRatings());
+		return rateGeneric(requst, person, rating, eventId, person.getSessionRatings());
 	}
 	
 	@POST
@@ -114,7 +114,7 @@ public class RatingResource {
 		if (person == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
-		return getRating(request, person.getEventRatings());
+		return getRating(request, person.getSessionRatings());
 	}
 	
 	private Response getRating(@Context HttpServletRequest request, Map<Integer, Integer> ratings) {

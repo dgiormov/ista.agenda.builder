@@ -1,12 +1,7 @@
 package auth.filter;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -16,35 +11,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import persistency.entities.LoggedUser;
-import persistency.entities.Speaker;
 import persistency.exposed.LoggedUserExposed;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import auth.UserPrincipalRequestWrapper;
-import auth.openidconnect.ProviderData;
-import auth.openidconnect.Utils;
 
-public class AuthenticatedUserFilter implements Filter {
+public class AuthenticatedUserFilter extends AbstractFilter {
 
-	private static final String USER_ROLES_JSON = "user_roles.json";
-	private static final List<UserInRole> roles = new ArrayList<UserInRole>();
-
+	
 	public void init(FilterConfig cfg) throws ServletException {
 	}
 
 	public void doFilter(ServletRequest req, ServletResponse response,
 			FilterChain next) throws IOException, ServletException {
+		super.doFilter(req, response, next);
 		HttpServletRequest request = (HttpServletRequest) req;
-		
-		if(roles.isEmpty()){
-			Gson g = new Gson();
-	   		final BufferedReader userData = new BufferedReader(new InputStreamReader(request.getServletContext().getResourceAsStream(Utils.PATH_TO_PROVIDERS+USER_ROLES_JSON)));
-	   		List<UserInRole> tempRead = g.fromJson(userData, new TypeToken<List<UserInRole>>(){}.getType());
-	   		roles.addAll(tempRead);
-		}
-
 		String user = null;
 		LoggedUserExposed lue = new LoggedUserExposed();
 		LoggedUser currentUser = lue.getCurrentUser(request);
@@ -63,23 +42,9 @@ public class AuthenticatedUserFilter implements Filter {
 		}
 		next.doFilter(new UserPrincipalRequestWrapper(user, getRolesForUser(user), request), response);
 	}
-
-	private List<String> getRolesForUser(String user) {
-		List<String> result = new ArrayList<String>();
-		result.add("user");
-		for (UserInRole userInRole : roles) {
-			if(userInRole.userName.equals(user)){
-				result.add(userInRole.role);
-			}
-		}
-		return result;
-	}
-
+	
 	public void destroy() {
 	}
 	
-	private class UserInRole {
-		private String userName;
-		private String role;
-	}
+	
 }

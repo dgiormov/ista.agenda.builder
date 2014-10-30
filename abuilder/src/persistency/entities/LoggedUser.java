@@ -118,7 +118,7 @@ public class LoggedUser implements Serializable {
 		return sessions;
 	}
 
-	public Map<Integer, Integer> getEventRatings() {
+	public Map<Integer, Integer> getSessionRatings() {
 		return sessionRatings;
 	}
 
@@ -131,7 +131,7 @@ public class LoggedUser implements Serializable {
 	}
 
 	public boolean isActive() {
-		return getEventRatings() != null && getEventRatings().size() > 0
+		return getSessionRatings() != null && getSessionRatings().size() > 0
 				|| getSessions() != null && getSessions().size() > 1;
 	}
 	

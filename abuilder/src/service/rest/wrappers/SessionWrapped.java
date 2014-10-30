@@ -47,7 +47,7 @@ public class SessionWrapped {
 		rating = 0;
 		if(p != null){
 			isAnsweredAlready = p.getViktorina().get(e.getId()) != null;
-			Integer integer = p.getEventRatings().get(e.getId());
+			Integer integer = p.getSessionRatings().get(e.getId());
 			rating = integer == null ? 0 : integer;
 		}
 		hasSecret = e.getSecretWord()!=null &&  !isAnsweredAlready;
