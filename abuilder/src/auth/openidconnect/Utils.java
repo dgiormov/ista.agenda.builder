@@ -1,13 +1,18 @@
 package auth.openidconnect;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.KeyStore;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLContextSpi;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.oltu.oauth2.common.OAuthProviderType;
 
 import com.google.gson.Gson;
@@ -61,6 +66,16 @@ public final class Utils {
     	providers.put(name, pd);
     	return pd;
     }
+    
+//    public static ProviderData loadLinkedInKeystore(HttpServletRequest request){
+//    	KeyStore trustStore  = KeyStore.getInstance(KeyStore.getDefaultType());
+//    	InputStream instream = request.getServletContext().getResourceAsStream(PATH_TO_PROVIDERS+"linkedin.jks");
+//        try {
+//            trustStore.load(instream, "nopassword".toCharArray());
+//        } finally {
+//            instream.close();
+//        }
+//    }
     
     public static String getClientSecret(String app, HttpServletRequest request){
     	ProviderData provider = getProvider(app, request);
@@ -158,18 +173,6 @@ public final class Utils {
 
     private static boolean isEmpty(String value) {
         return value == null || "".equals(value);
-    }
-
-
-    public static String findCookieValue(HttpServletRequest request, String key) {
-        Cookie[] cookies = request.getCookies();
-
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(key)) {
-                return cookie.getValue();
-            }
-        }
-        return "";
     }
 
     public static String isIssued(String value) {

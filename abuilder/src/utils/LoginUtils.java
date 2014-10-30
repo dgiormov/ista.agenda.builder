@@ -12,18 +12,28 @@ public class LoginUtils {
 
 		} else {
 			for (Cookie cookie : cookies) {
-				if (Constants.COOKIE_NAME.equals(cookie.getName())) {
+				if (Constants.COOKIE_PROVIDER_KEY.equals(cookie.getName())) {
 					cookie.setMaxAge(0);
 				}
 			}
 		}
 	}
 	
-	public static String createCookie(HttpServletResponse response, String id) {
-		Cookie cookie = new Cookie(Constants.COOKIE_NAME, id);
+	public static void createCookie(HttpServletResponse response, String provider) {
+		Cookie cookie = new Cookie(Constants.COOKIE_PROVIDER_KEY, provider);
 		// 60 days
 		cookie.setMaxAge(60 * 60 * 24 * 60);
 		response.addCookie(cookie);
-		return id;
 	}
+	
+	public static String findCookieValue(HttpServletRequest request, String key) {
+        Cookie[] cookies = request.getCookies();
+
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(key)) {
+                return cookie.getValue();
+            }
+        }
+        return "";
+    }
 }

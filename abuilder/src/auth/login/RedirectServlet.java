@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.client.HttpClient;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
@@ -42,6 +43,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
+import utils.LoginUtils;
 import auth.openidconnect.ApplicationException;
 import auth.openidconnect.OAuthParams;
 import auth.openidconnect.ProviderData;
@@ -80,13 +82,13 @@ public class RedirectServlet extends HttpServlet {
 				OAuthParams oauthParams = new OAuthParams();
 				try {
 					// Get OAuth Info
-					String clientId = Utils.findCookieValue(request, "clientId");
-					String clientSecret = Utils.findCookieValue(request, "clientSecret");
-					String authzEndpoint = Utils.findCookieValue(request, "authzEndpoint");
-					String tokenEndpoint = Utils.findCookieValue(request, "tokenEndpoint");
-					String redirectUri = Utils.findCookieValue(request, "redirectUri");
-					String scope = Utils.findCookieValue(request, "scope");
-					String state = Utils.findCookieValue(request, "state");
+					String clientId = LoginUtils.findCookieValue(request, "clientId");
+					String clientSecret = LoginUtils.findCookieValue(request, "clientSecret");
+					String authzEndpoint = LoginUtils.findCookieValue(request, "authzEndpoint");
+					String tokenEndpoint = LoginUtils.findCookieValue(request, "tokenEndpoint");
+					String redirectUri = LoginUtils.findCookieValue(request, "redirectUri");
+					String scope = LoginUtils.findCookieValue(request, "scope");
+					String state = LoginUtils.findCookieValue(request, "state");
 
 
 					oauthParams.setClientId(clientId);
@@ -105,7 +107,7 @@ public class RedirectServlet extends HttpServlet {
 					String code = oar.getCode();
 					oauthParams.setAuthzCode(code);
 
-					String app = Utils.findCookieValue(request, "app");
+					String app = LoginUtils.findCookieValue(request, "app");
 					response.addCookie(new Cookie("app", app));
 					provider = app;
 					oauthParams.setApplication(app);
@@ -148,6 +150,7 @@ public class RedirectServlet extends HttpServlet {
 		//backup 60 min
 		findPersonByOpenId.setSessionExpires(60*60);
 		lue.updateEntity(findPersonByOpenId);
+		LoginUtils.createCookie(response, Utils.TWITTER);
 		request.getSession().setAttribute(Utils.ACCESS_TOKEN_SESSION_KEY, findPersonByOpenId.getAccessToken());
 	}
 
@@ -167,8 +170,9 @@ public class RedirectServlet extends HttpServlet {
 					.setGrantType(GrantType.AUTHORIZATION_CODE).setParameter(OAuth.OAUTH_ACCESS_TOKEN, oauthParams.getAccessToken())
 					.buildBodyMessage();
 
-			OAuthClient client = new OAuthClient(new URLConnectionClient());
-			String app = Utils.findCookieValue(req, "app");
+			URLConnectionClient httpClient = new URLConnectionClient();
+			OAuthClient client = new OAuthClient(httpClient);
+			String app = LoginUtils.findCookieValue(req, "app");
 
 			OAuthAccessTokenResponse oauthResponse = null;
 			Class<? extends OAuthAccessTokenResponse> cl = OAuthJSONAccessTokenResponse.class;
@@ -178,7 +182,6 @@ public class RedirectServlet extends HttpServlet {
 			} else if (Utils.GOOGLE.equalsIgnoreCase(app)){
 				cl = OpenIdConnectResponse.class;
 			}
-
 			oauthResponse = client.accessToken(request, cl);
 
 			oauthParams.setAccessToken(oauthResponse.getAccessToken());
@@ -282,6 +285,7 @@ public class RedirectServlet extends HttpServlet {
 			findPersonByOpenId.setSessionExpires(System.currentTimeMillis() + 60*60*1000);
 		}
 		findPersonByOpenId.setAccessToken(oauthParams.getAccessToken());
+		LoginUtils.createCookie(response, oauthParams.getApplication());
 		lue.updateEntity(findPersonByOpenId);
 		request.getSession().setAttribute(Utils.ACCESS_TOKEN_SESSION_KEY, findPersonByOpenId.getAccessToken());
 	}

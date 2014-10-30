@@ -21,6 +21,8 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.RequestToken;
+import utils.Constants;
+import utils.LoginUtils;
 
 public class BeginAuthorization extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -34,6 +36,16 @@ public class BeginAuthorization extends HttpServlet {
 			String providerName = request.getParameter("provider");
 			if(providerName == null){
 				response.sendError(400);
+				return;
+			}
+			if(providerName.equals("auto")){
+				String provider = LoginUtils.findCookieValue(request, Constants.COOKIE_PROVIDER_KEY);
+				if(provider != null && provider.length() > 0){
+					providerName = provider; 
+				} else{
+					response.sendError(400);
+					return;
+				}
 			}
 			String clientId = Utils.getClientId(providerName, request);
 			if(clientId == null || clientId.length() == 0){

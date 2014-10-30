@@ -10,6 +10,8 @@ import javax.ws.rs.core.Response;
 
 import persistency.entities.LoggedUser;
 import persistency.exposed.LoggedUserExposed;
+import utils.Constants;
+import utils.LoginUtils;
 
 import com.google.gson.Gson;
 
@@ -30,6 +32,8 @@ public class LoggedUserREST {
 		LoggedUser currentUser = lue.getCurrentUser(request);
 		LoggedUserJson result = new LoggedUserJson();
 		result.isLogged = false;
+		String cookieValue = LoginUtils.findCookieValue(request, Constants.COOKIE_PROVIDER_KEY);
+		result.hasCookie = cookieValue != null &&  cookieValue.trim().length() > 0;
 		if(currentUser != null){
 			result.isLogged = true;
 			
@@ -46,6 +50,7 @@ public class LoggedUserREST {
 	private class LoggedUserJson {
 		private boolean isLogged;
 		private String name;
+		private boolean hasCookie;
 	}
 
 }

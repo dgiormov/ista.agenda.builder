@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import persistency.entities.LoggedUser;
 import persistency.exposed.LoggedUserExposed;
+import utils.Constants;
+import utils.LoginUtils;
 
 /**
  * Servlet implementation class IsUserLogged
@@ -26,7 +28,12 @@ public class IsUserLogged extends HttpServlet {
 				if(!personById.isSessionExpired()){
 					return;
 				}
-			} 
+			}
+			String provider = LoginUtils.findCookieValue(request, Constants.COOKIE_PROVIDER_KEY);
+			if(provider != null){
+				response.sendRedirect("/redirect?provider="+provider);
+				return;
+			}
 			response.sendError(401);
 	}
 }
