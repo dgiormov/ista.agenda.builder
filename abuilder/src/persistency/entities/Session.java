@@ -18,13 +18,13 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 /**
- * Entity implementation class for Entity: Event
+ * Entity implementation class for Entity: Session
  * 
  */
 @Entity
 @NamedQueries({
-		@NamedQuery(name = "allEventsSQL", query = "SELECT e FROM Session e"),
-		@NamedQuery(name = "getEventById", query = "SELECT e FROM Session e WHERE e.id = :id") })
+		@NamedQuery(name = "allSessionsSQL", query = "SELECT e FROM Session e"),
+		@NamedQuery(name = "getSessionById", query = "SELECT e FROM Session e WHERE e.id = :id") })
 public class Session implements Serializable {
 
 	@Override
@@ -185,8 +185,8 @@ public class Session implements Serializable {
 	@Override
 	public boolean equals(Object obj) {
 		if (Session.class.isInstance(obj)) {
-			Session newEvent = (Session) obj;
-			return getId() == newEvent.getId();
+			Session newSession = (Session) obj;
+			return getId() == newSession.getId();
 		}
 		return super.equals(obj);
 	}

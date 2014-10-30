@@ -13,13 +13,13 @@ public class ICalendarConverter {
 //	@Override
 //	public String toString() {
 //		return "BEGIN:VCALENDAR\n" 
-//				+ "PRODID:-//" + Constants.EVENT_SHORT_NAME + "//Event//EN\n"
+//				+ "PRODID:-//" + Constants.SESSION_SHORT_NAME + "//Session//EN\n"
 //				+ "VERSION:2.0\n"
 //				+ "METHOD:PUBLISH\n"
-//				+ "BEGIN:VEVENT\n"
-//				+ "UID:" + Constants.EVENT_SHORT_NAME + "Event" + e.getId() + "\n"
-//				+ "DTSTART:" + Constants.EVENT_DATE + "T" + getFormatedTime(e.getStartTime() + Constants.TIME_DIFERENCE) + "00Z\n"
-//				+ "DTEND:" + Constants.EVENT_DATE + "T" + getFormatedTime(e.getStartTime() + Constants.TIME_DIFERENCE + e.getDuration()) + "00Z\n" 
+//				+ "BEGIN:VSESSION\n"
+//				+ "UID:" + Constants.SESSION_SHORT_NAME + "SESSION" + e.getId() + "\n"
+//				+ "DTSTART:" + Constants.SESSION_DATE + "T" + getFormatedTime(e.getStartTime() + Constants.TIME_DIFERENCE) + "00Z\n"
+//				+ "DTEND:" + Constants.SESSION_DATE + "T" + getFormatedTime(e.getStartTime() + Constants.TIME_DIFERENCE + e.getDuration()) + "00Z\n" 
 //				+ "SUMMARY:" + e.getName() + "\n" 
 //				+ "DESCRIPTION:" + e.getDescription() + "\n"
 //				+ "LOCATION:" + e.getRoom() + "\n" 
@@ -30,7 +30,7 @@ public class ICalendarConverter {
 //				+ "ACTION:DISPLAY\n" 
 //				+ "DESCRIPTION:Reminder\n"
 //				+ "END:VALARM\n" 
-//				+ "END:VEVENT\n" 
+//				+ "END:VSESSION\n" 
 //				+ "END:VCALENDAR\n";
 //	}
 

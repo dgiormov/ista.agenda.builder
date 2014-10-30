@@ -28,34 +28,34 @@ public class RatingResource {
 	
 	@POST
 	@Path("/session")
-	public Response rateSession(@Context HttpServletRequest requst, @QueryParam("rating") String rating, @QueryParam("sessionId") String eventId){
+	public Response rateSession(@Context HttpServletRequest requst, @QueryParam("rating") String rating, @QueryParam("sessionId") String sessionId){
 		LoggedUserExposed pe = new LoggedUserExposed();
 		LoggedUser person = pe.getCurrentUser(requst);
 		
 		if (person == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
-		return rateGeneric(requst, person, rating, eventId, person.getSessionRatings());
+		return rateGeneric(requst, person, rating, sessionId, person.getSessionRatings());
 	}
 	
 	@POST
 	@Path("/speaker")
-	public Response rateSpeaker(@Context HttpServletRequest requst, @FormParam("rating") String rating, @FormParam("eventId") String eventId){
+	public Response rateSpeaker(@Context HttpServletRequest requst, @FormParam("rating") String rating, @FormParam("sessionId") String sessionId){
 		LoggedUserExposed pe = new LoggedUserExposed();
 		LoggedUser person = pe.getCurrentUser(requst);
 		
 		if (person == null || requst.getUserPrincipal() == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
-		return rateGeneric(requst, person, rating, eventId, person.getSpeakerRatings());
+		return rateGeneric(requst, person, rating, sessionId, person.getSpeakerRatings());
 	}
 	
-	private Response rateGeneric(HttpServletRequest request, LoggedUser person, String rating, String eventId, Map<Integer, Integer> ratings){
+	private Response rateGeneric(HttpServletRequest request, LoggedUser person, String rating, String sessionId, Map<Integer, Integer> ratings){
 		if (!AppControl.writeMode()) {
-//FIXME			return Response.status(Status.PAYMENT_REQUIRED).entity("You can only rate session during the event.").build();
+//FIXME			return Response.status(Status.PAYMENT_REQUIRED).entity("You can only rate session during the session.").build();
 		}
 
-		if (eventId == null) {
+		if (sessionId == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		if (rating == null) {
@@ -67,30 +67,29 @@ public class RatingResource {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		SessionExposedBasic ee = new SessionExposedBasic();
-		Session event = ee.findEventById(eventId);
-		if (event == null) {
+		Session session = ee.findSessionById(sessionId);
+		if (session == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
-		if (checkForConflictingTalks(ratings, event, ee)) {
+		if (checkForConflictingTalks(ratings, session, ee)) {
 			return Response.status(Status.NOT_ACCEPTABLE).entity("It is quite impossible for you to have attended all these sessions.").build();
 		}
-		boolean isContained = ratings.containsKey(event.getId());
+		boolean isContained = ratings.containsKey(session.getId());
 		if(bin0 == 0){
 			if(isContained){
-				ratings.remove(event.getId());
+				ratings.remove(session.getId());
 			}
 		} else {
-			ratings.put(event.getId(), bin0);
+			ratings.put(session.getId(), bin0);
 		}
 		LoggedUserExposed pe = new LoggedUserExposed();
 		pe.updateEntity(person);
 		return Response.status(Status.OK).build();
-//		logger.info("Session with id: " + eventId +" has been rated with: " + bin0 + " by: "+person.getName());
 	}
 	
 	private boolean checkForConflictingTalks(Map<Integer, Integer> ratings,
-			Session event, SessionExposedBasic ee) {
-		return ratings.get(event.getId()) == null && ratings.size() >= RATE_LIMIT;
+			Session session, SessionExposedBasic ee) {
+		return ratings.get(session.getId()) == null && ratings.size() >= RATE_LIMIT;
 	}
 	
 	@GET
@@ -119,11 +118,11 @@ public class RatingResource {
 	
 	private Response getRating(@Context HttpServletRequest request, Map<Integer, Integer> ratings) {
 		
-		String eventId = request.getParameter("id");
-		if (eventId == null) {
+		String sessionId = request.getParameter("id");
+		if (sessionId == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
-		Integer rating = ratings.get(Integer.parseInt(eventId));
+		Integer rating = ratings.get(Integer.parseInt(sessionId));
 		if (rating != null) {
 			return Response.status(Status.OK).entity(rating).build();
 		}

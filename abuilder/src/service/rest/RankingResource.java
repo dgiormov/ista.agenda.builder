@@ -1,8 +1,6 @@
 package service.rest;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -10,12 +8,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import persistency.entities.LoggedUser;
-import persistency.entities.Points;
+import persistency.entities.PointsInstance;
 import persistency.exposed.LoggedUserExposed;
+import utils.PointsHelper;
 
 import com.google.gson.Gson;
-
-import utils.PointsHelper;
 
 public class RankingResource {
 	
@@ -28,9 +25,9 @@ public class RankingResource {
 		int pid = Integer.parseInt(id);
 		pid = pid -42;
 		LoggedUser personById = pe.findPersonById(pid+"");
-		Map<String, List<PointsHelper>> playerStats = personById.getPlayerStats();
+		List<PointsInstance> playerStats = personById.getCodes();
 		return Response.status(Response.Status.OK)
-				.entity(g.toJson(new StatsHelper(playerStats.get("generic"), playerStats.get("codes"), personById.getPlayer().getPoints()))).build();
+				.entity(g.toJson(playerStats)).build();
 	}
 	
 	@GET
@@ -41,9 +38,9 @@ public class RankingResource {
 		pid = pid -42;
 		LoggedUser personById = pe.findPersonById(pid+"");
 		String result = "";
-		List<Points> points = personById.getPoints();
-		for (Points points2 : points) {
-			result+="Points code: "+points2.getType().getName() +" points: "+points2.getType().getPoints() + "\n\r";
+		List<PointsInstance> points = personById.getCodes();
+		for (PointsInstance points2 : points) {
+			result+="Points code: "+points2.getCategory().getName() +" points: "+points2.getCategory().getPoints() + "\n\r";
 		}
 		return Response.status(Response.Status.OK)
 				.entity(result).build();

@@ -37,7 +37,7 @@ public class BookSessionResource {
 		boolean bin0 = isSelectedString;
 
 		SessionExposedBasic ee = new SessionExposedBasic();
-		Session session = ee.findEventById(sessionId);
+		Session session = ee.findSessionById(sessionId);
 		if (session == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
@@ -66,11 +66,11 @@ public class BookSessionResource {
 		}
 
 		SessionExposedBasic ee = new SessionExposedBasic();
-		Session event = ee.findEventById(sessionId);
-		if (event == null) {
+		Session session = ee.findSessionById(sessionId);
+		if (session == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
-		boolean isSelected = person.getSessions().contains(event);
+		boolean isSelected = person.getSessions().contains(session);
 		return Response.ok().entity(isSelected + "").build();
 	}
 }

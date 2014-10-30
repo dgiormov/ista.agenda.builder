@@ -1,11 +1,8 @@
 package gamification;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import persistency.entities.LoggedUser;
-import persistency.entities.Points;
 
 public class Player implements Comparable<Player> {
 
@@ -17,10 +14,7 @@ public class Player implements Comparable<Player> {
 	public Player(LoggedUser p) {
 		id = p.getId()+42;
 		name = p.getName();
-		List<Points> allpoints = p.getPoints();
-		for (Points point : allpoints) {
-			points += point.getType().getPoints();
-		}
+		points = p.getPoints();
 			
 	}
 

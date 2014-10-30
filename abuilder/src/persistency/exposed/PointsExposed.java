@@ -6,67 +6,74 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
-import persistency.entities.Code;
+import persistency.entities.PointsInstance;
 import persistency.entities.LoggedUser;
 import utils.DBUtils;
 
 @SuppressWarnings("unchecked")
-public class CodesExposed {
+public class PointsExposed {
 
 	public EntityManager entityManager = null;
 	
 	public static final String JTA_PU_NAME = "statCreateTablesJTA";
 
-	public CodesExposed() {
+	public PointsExposed() {
 		entityManager = DBUtils.getEMF().createEntityManager();
 	}
 
-	public void createEntity(Code e) {
+	public void createEntity(PointsInstance e) {
 		EntityTransaction transaction = entityManager.getTransaction();
 		transaction.begin();
 		entityManager.persist(e);
 		transaction.commit();
 	}
 	
-	public void updateEntity(Code e) {
+	public void updateEntity(PointsInstance e) {
 		EntityTransaction transaction = entityManager.getTransaction();
 		transaction.begin();
 		entityManager.merge(e);
 		transaction.commit();
 	}
 	
-	public List<Code> allCodes() {
+	public List<PointsInstance> allCodes() {
 		Query namedQuery = entityManager.createNamedQuery("allCodes");
-		List<Code> codeList = namedQuery.getResultList();
+		List<PointsInstance> codeList = namedQuery.getResultList();
 		return codeList;
 	}
 	
-	public List<Code> freeCodes(int type) {
+	public List<PointsInstance> freeCodes(int type) {
 		Query namedQuery = entityManager.createNamedQuery("freeCodes");
 		namedQuery.setParameter("type", type);
 		namedQuery.setMaxResults(10);
-		List<Code> codeList = namedQuery.getResultList();
+		List<PointsInstance> codeList = namedQuery.getResultList();
 		return codeList;
 	}
 	
-	public Code getCode(String code) {
+	public PointsInstance getCode(String code) {
 		Query namedQuery = entityManager.createNamedQuery("getCode");
 		namedQuery.setParameter("code", code);
-		return (Code) namedQuery.getSingleResult();
+		return (PointsInstance) namedQuery.getSingleResult();
 	}
 	
-	public List<Code> getCodesByType(String type, LoggedUser p) {
+	public List<PointsInstance> getCodesByType(String type, LoggedUser p) {
 		Query namedQuery = entityManager.createNamedQuery("codesByType");
 		namedQuery.setParameter("type", Integer.parseInt(type));
 		namedQuery.setParameter("person", p);
-		List<Code> codeList = namedQuery.getResultList();
+		List<PointsInstance> codeList = namedQuery.getResultList();
 		return codeList;
 	}
 	
-	public void deleteEntity(Code e) {
+	public void deleteEntity(PointsInstance e) {
 		EntityTransaction transaction = entityManager.getTransaction();
 		transaction.begin();
 		entityManager.remove(e);
 		transaction.commit();
+	}
+
+	public void persistEntities(List<PointsInstance> pi) {
+		for (PointsInstance pointsInstance : pi) {
+			createEntity(pointsInstance);
+		}
+		
 	}
 }

@@ -63,18 +63,18 @@ public class CommentsResource {
 		Gson g = new Gson();
 		Data fromJson = g.fromJson(theString, Data.class);
 		SessionExposedBasic ee = new SessionExposedBasic();
-		Session event = ee.findEventById(sessionId);
+		Session session = ee.findSessionById(sessionId);
 		LoggedUserExposed pe = new LoggedUserExposed();
 		LoggedUser person = pe.getCurrentUser(request);
 		//		if(request.getUserPrincipal() == null){
 		//			return Response.status(Status.BAD_REQUEST).build();
 		//		}
-		if(event == null || person == null){
+		if(session == null || person == null){
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		CommentsExposedBasic ce = new CommentsExposedBasic();
 		Comment c = new Comment();
-		c.setEvent(event);
+		c.setSession(session);
 		c.setCowner(person);
 		//		c.setInReplyTo(Integer.parseInt(inReplyOf));
 		c.setText(fromJson.getData());

@@ -12,7 +12,7 @@ import persistency.entities.Speaker;
 import persistency.exposed.SpeakerExposed;
 
 /**
- * Entity implementation class for Entity: Event
+ * Entity implementation class for Entity: Session
  * 
  */
 public class SessionJson {

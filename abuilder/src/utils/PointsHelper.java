@@ -3,9 +3,9 @@ package utils;
 public class PointsHelper {
 
 	private String descr;
-	private String points;
+	private int points;
 
-	public PointsHelper(String descr, String points) {
+	public PointsHelper(String descr, int points) {
 		this.descr = descr;
 		this.points = points;
 		

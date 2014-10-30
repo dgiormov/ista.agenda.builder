@@ -25,7 +25,7 @@ import javax.persistence.OneToOne;
 
 import org.eclipse.persistence.annotations.Index;
 
-import persistency.exposed.CodesExposed;
+import persistency.exposed.PointsExposed;
 import utils.PointsHelper;
 import utils.Status;
 import utils.Status.STATE;
@@ -73,14 +73,11 @@ public class LoggedUser implements Serializable {
 	@OneToMany
 	private List<Session> sessions = new ArrayList<Session>();
 	
-	@OneToMany(mappedBy="owner")
-	private List<Points> points = new ArrayList<Points>();
-	
 	@OneToOne(mappedBy="enteredBy")
-	private Code puzzlePiece;
+	private PointsInstance puzzlePiece;
 	
 	@OneToMany(mappedBy="enteredBy")
-	private List<Code> codes = new ArrayList<Code>();
+	private List<PointsInstance> codes = new ArrayList<PointsInstance>();
 	
 	@ManyToMany(mappedBy="likedBy")
 	private List<Comment> likedComments = new ArrayList<Comment>();
@@ -196,46 +193,38 @@ public class LoggedUser implements Serializable {
 		return getName() != null;
 	}
 	
-	public Status addCode(Code code){
+	public Status addCode(PointsInstance code){
 		if(code.isUsed()){
 			return new Status(STATE.ERROR, "This code has been used.");
 		}
 		if(code.getEnteredBy() != null && !this.getUserName().equals(code.getEnteredBy().getUserName())) {
 			return new Status(STATE.ERROR, "This code has been used by "+code.getEnteredBy().getName());
 		}
-		int maxCodesOfThisType = code.getMaxCodesOfThisType();
-		List<Code> allCodesOfAType = findAllCodesOfAType(code.getGid());
-		if(code.getType() != Code.PUZZLE_CODE && allCodesOfAType.size() >= maxCodesOfThisType) {
-			return new Status(STATE.ERROR, "Sorry the rules do not allow you to enter more codes of this type ("+code.getName()+").");
-		} else if(code.getType() == Code.PUZZLE_CODE && allCodesOfAType.size() > maxCodesOfThisType) {
-			return new Status(STATE.ERROR, "Sorry the rules do not allow you to enter more codes of this type ("+code.getName()+").");
+		int maxCodesOfThisType = code.getCategory().getMaxInstacesPerPerson();
+		List<PointsInstance> allCodesOfAType = findAllCodesOfAType(code.getCategory());
+		if(allCodesOfAType.size() >= maxCodesOfThisType) {
+			return new Status(STATE.ERROR, "Sorry the rules do not allow you to enter more codes of this type ("+code.getCategory().getName()+").");
 		}
-		CodesExposed ce = new CodesExposed();
+		PointsExposed ce = new PointsExposed();
 		code.setUsed(true);
 		code.setEnteredBy(this);
 		ce.updateEntity(code);
 		if(!getCodes().contains(code)){
 			getCodes().add(code);	
 		}
-		//FIXME points
-//		addPoints(code.getGid(), code.getPoints());
-		return new Status(STATE.OK, code.getPoints()); 
+		return new Status(STATE.OK, code.getCategory().getPoints()); 
 	}
 
-	private List<Code> findAllCodesOfAType(int gid) {
-		List<Code> result = new ArrayList<Code>();
+	private List<PointsInstance> findAllCodesOfAType(PointsCategory c) {
+		List<PointsInstance> result = new ArrayList<PointsInstance>();
 		if(getCodes() != null){
-			for (Code code : getCodes()) {
-				if(code.getGid() == gid){
+			for (PointsInstance code : getCodes()) {
+				if(code.getCategory().equals(c)){
 					result.add(code);
 				}
 			}	
 		}
 		return result;
-	}
-
-	public List<Points> getPoints() {
-		return points;
 	}
 
 	public void addComment(Comment c) {
@@ -245,54 +234,13 @@ public class LoggedUser implements Serializable {
 		
 	}
 
-	public void addToAgenda(Session event) {
-		if(!getSessions().contains(event)){
-			getSessions().add(event);
-			if(getSessions().size() > 4){
-				//FIXME add points
-//				addPoints(ScoreCategories.PROGRAM_PREPARED, Score.AGENDA);	
-			}
+	public void addToAgenda(Session session) {
+		if(!getSessions().contains(session)){
+			getSessions().add(session);
 		}
 	}
 	
-	public Map<String, List<PointsHelper>> getPlayerStats(){
-		List<PointsHelper> genericData = new ArrayList<PointsHelper>();
-		List<PointsHelper> codesData = new ArrayList<>();
-		Map<String, List<PointsHelper>> map = new HashMap<String, List<PointsHelper>>();
-		genericData.add(new PointsHelper("Logging in", Score.LOGIN+""));
-		if(getSessions().size() > 4 ){
-			genericData.add(new PointsHelper("Agenda prepared", Score.AGENDA+""));
-		}
-		if(viktorina.size()>0){
-			genericData.add(new PointsHelper("Secret words", (Score.SESSION_SPECIAL*viktorina.size())+""));
-		}
-		
-		int likes = 0;
-		int bonuses = 0;
-		for (Comment comment : comments) {
-			likes+=comment.getLikes();
-			if(comment.getLikes() > 3){
-				bonuses++;
-			}
-		}
-		genericData.add(new PointsHelper("My comment liked", likes +"x"+Score.LIKED));
-		genericData.add(new PointsHelper("4 likes of my comment", bonuses  +"x"+Score.LIKED5));
-		map.put("generic", genericData);
-		for (Code code : getCodes()) {
-			if(code.getType() == Code.PUZZLE_CODE){
-				if(code.isUsed()){
-					codesData.add(new PointsHelper(code.getName(), code.getPoints()+""));
-				}
-			} else {
-				codesData.add(new PointsHelper(code.getName(), code.getPoints()+""));
-			}
-		}
-		
-		map.put("codes", codesData);
-		return map;
-	}
-
-	public Code getPuzzlePiece() {
+	public PointsInstance getPuzzlePiece() {
 		return puzzlePiece;
 	}
 	
@@ -300,11 +248,11 @@ public class LoggedUser implements Serializable {
 		return getPuzzlePiece() != null;
 	}
 
-	public void setPuzzlePiece(Code puzzlePiece) {
+	public void setPuzzlePiece(PointsInstance puzzlePiece) {
 		this.puzzlePiece = puzzlePiece;
 	}
 
-	public List<Code> getCodes() {
+	public List<PointsInstance> getCodes() {
 		return codes;
 	}
 
@@ -346,6 +294,15 @@ public class LoggedUser implements Serializable {
 
 	public void setSecretAccess(String secretAccess) {
 		this.secretAccess = secretAccess;
+	}
+
+	public int getPoints() {
+		List<PointsInstance> codes2 = getCodes();
+		int points = 0;
+		for (PointsInstance pointsInstance : codes2) {
+			points+=pointsInstance.getCategory().getPoints();
+		}
+		return points;
 	}
 
 }

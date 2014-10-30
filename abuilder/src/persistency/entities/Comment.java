@@ -15,7 +15,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 @NamedQueries({
-	@NamedQuery(name = "allComments", query = "SELECT e FROM Comment e WHERE e.event.id = :id"),
+	@NamedQuery(name = "allComments", query = "SELECT e FROM Comment e WHERE e.session.id = :id"),
 	@NamedQuery(name = "allCommentsRaw", query = "SELECT e FROM Comment e"),
 	@NamedQuery(name = "allCommentsByUser", query = "SELECT e FROM Comment e WHERE e.cowner.id = :id"),
 	@NamedQuery(name = "commentById", query = "SELECT e FROM Comment e WHERE e.id = :id")})
@@ -31,7 +31,7 @@ public class Comment {
 	private int inReplyTo;
 	
 	@OneToOne
-	private Session event;
+	private Session session;
 	
 	private LoggedUser cowner;
 	
@@ -73,12 +73,12 @@ public class Comment {
 		this.cowner = cowner;
 	}
 
-	public Session getEvent() {
-		return event;
+	public Session getSession() {
+		return session;
 	}
 
-	public void setEvent(Session event) {
-		this.event = event;
+	public void setSession(Session session) {
+		this.session = session;
 	}
 
 	public int getLikes() {
@@ -94,7 +94,7 @@ public class Comment {
 			Comment c = (Comment) obj;
 			return (c.getCowner().getId() == this.cowner.getId()) && 
 					(c.getText().equals(this.getText())) &&
-					(c.getEvent().getId() == this.getEvent().getId());
+					(c.getSession().getId() == this.getSession().getId());
 		}
 		return false;
 	}

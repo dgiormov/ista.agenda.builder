@@ -1,0 +1,58 @@
+[
+{
+"name": "Secret Words",
+"description": "Secret words that are given by the speakers and are filled by the players",
+"maxInstacesPerPerson": 5,
+"selfGeneratingInstances": true,
+"maxNumberOfInstances": -1,
+"areCompositeCodes": false,
+"points": 5
+},
+{
+"name": "Login",
+"description": "Points are provided when the user performs login for the first time",
+"maxInstacesPerPerson": 1,
+"selfGeneratingInstances": true,
+"maxNumberOfInstances": -1,
+"areCompositeCodes": false,
+"points": 5
+},
+{
+"name": "Prepare for the conference",
+"description": "Points are given when a user plans for the conference day",
+"maxInstacesPerPerson": 1,
+"selfGeneratingInstances": true,
+"maxNumberOfInstances": -1,
+"areCompositeCodes": false,
+"points": 3
+},
+{
+"name": "Share in social media",
+"description": "Points are given when a user plans for the conference day",
+"maxInstacesPerPerson": 1,
+"selfGeneratingInstances": true,
+"maxNumberOfInstances": -1,
+"areCompositeCodes": false,
+"points": 3
+},
+{
+"name": "Good comment",
+"description": "Points are given when a comment submitted by the user is liked by a number of people",
+"maxInstacesPerPerson": -1,
+"selfGeneratingInstances": true,
+"maxNumberOfInstances": -1,
+"areCompositeCodes": false,
+"points": 3
+},
+{
+"name": "Puzzle",
+"description": "Points are provided a group of people that collect valid collection of codes",
+"maxInstacesPerPerson": 1,
+"codeLength": 2,
+"selfGeneratingInstances": true,
+"maxNumberOfInstances": 50,
+"areCompositeCodes": true,
+"compositeCodePossitions":["1a","2a","3a","4a","5a","6a"]
+"points": 5
+}
+]

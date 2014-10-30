@@ -42,9 +42,9 @@ public class SessionExposedBasic {
 	}
 
 	public List<SessionBasic> allEntities(HttpServletRequest request) {
-		Query namedQuery = entityManager.createNamedQuery("allEventsSQL");
-		List<Session> eventList = namedQuery.getResultList();
-		List<SessionBasic> resultList = toSessionBasic(eventList, request);
+		Query namedQuery = entityManager.createNamedQuery("allSessionsSQL");
+		List<Session> sessionList = namedQuery.getResultList();
+		List<SessionBasic> resultList = toSessionBasic(sessionList, request);
 		return resultList;
 	}
 	
@@ -60,37 +60,37 @@ public class SessionExposedBasic {
 	}
 	
 	public List<SessionBasic> allEntities() {
-		Query namedQuery = entityManager.createNamedQuery("allEventsSQL");
-		List<Session> eventList = namedQuery.getResultList();
-		List<SessionBasic> resultList = toSessionBasic(eventList, null);
+		Query namedQuery = entityManager.createNamedQuery("allSessionsSQL");
+		List<Session> sessionList = namedQuery.getResultList();
+		List<SessionBasic> resultList = toSessionBasic(sessionList, null);
 		return resultList;
 	}
 
-	private List<SessionBasic> toSessionBasic(List<Session> eventList, HttpServletRequest request) {
+	private List<SessionBasic> toSessionBasic(List<Session> sessionList, HttpServletRequest request) {
 		List<SessionBasic> resultList = new ArrayList<SessionBasic>();
 		LoggedUser p = null;
 		if(request != null){
 			LoggedUserExposed pe = new LoggedUserExposed();
 			p = pe.getCurrentUser(request);
 		}
-		for (Session event : eventList) {
+		for (Session session : sessionList) {
 			if(p != null){
-				event.setSelected(p.getSessions().contains(event));	
+				session.setSelected(p.getSessions().contains(session));	
 			}
-			resultList.add(new SessionBasic(event));
+			resultList.add(new SessionBasic(session));
 		}
 		Collections.sort(resultList);
 		return resultList;
 	}
 	
-	private int getSpeakerRating(LoggedUser person, Session eventEntry) {
+	private int getSpeakerRating(LoggedUser person, Session sessionEntry) {
 		if (person != null) {
 			Map<Integer, Integer> sessions = person.getSpeakerRatings();
 			if (sessions != null) {
 				Set<Integer> sessionSet = sessions.keySet();
-				for (Integer eventId : sessionSet) {
-					if (eventId == eventEntry.getId()) {
-						return sessions.get(eventId);
+				for (Integer sessionId : sessionSet) {
+					if (sessionId == sessionEntry.getId()) {
+						return sessions.get(sessionId);
 					}
 				}
 			}
@@ -98,11 +98,11 @@ public class SessionExposedBasic {
 		return 0;
 	}
 
-	private boolean isSelected(LoggedUser person, Session eventEntry) {
+	private boolean isSelected(LoggedUser person, Session sessionEntry) {
 		if (person != null) {
 			List<Session> sessions = person.getSessions();
-			for (Session event : sessions) {
-				if (event.getId() == eventEntry.getId()) {
+			for (Session session : sessions) {
+				if (session.getId() == sessionEntry.getId()) {
 					return true;
 				}
 			}
@@ -110,12 +110,12 @@ public class SessionExposedBasic {
 		return false;
 	}
 
-	private String computeTimeRange(SessionBasic eventEntry) {
-		int startTimeInt = eventEntry.getStartTime();
+	private String computeTimeRange(SessionBasic sessionEntry) {
+		int startTimeInt = sessionEntry.getStartTime();
 		String startTime = startTimeInt + "";
 		String minutes = startTime.substring(startTime.length() - 2);
 		int minInt = Integer.parseInt(minutes);
-		int duration = eventEntry.getDuration();
+		int duration = sessionEntry.getDuration();
 		int durationIndex = 1;
 		int endTime = 0;
 		if (minInt + duration >= 60) {
@@ -129,12 +129,12 @@ public class SessionExposedBasic {
 		return (startTimeInt / 100) + ":" + minutes; // +" - "+(endTime/100)+":"+endTimeStr.substring(endTimeStr.length()-2);
 	}
 
-	public Session findEventById(String id) {
+	public Session findSessionById(String id) {
 		EntityTransaction transaction = entityManager.getTransaction();
 		transaction.begin();
 		Session result = null;
 		try {
-			Query namedQuery = entityManager.createNamedQuery("getEventById");
+			Query namedQuery = entityManager.createNamedQuery("getSessionById");
 			namedQuery.setParameter("id", Integer.parseInt(id));
 			try {
 				result = (Session) namedQuery.getSingleResult();
@@ -147,12 +147,12 @@ public class SessionExposedBasic {
 		return result;
 	}
 	
-	public SessionWrapped findEventByIdWrapped(String id, LoggedUser p) {
+	public SessionWrapped findSessionByIdWrapped(String id, LoggedUser p) {
 		EntityTransaction transaction = entityManager.getTransaction();
 		transaction.begin();
 		Session result = null;
 		try {
-			Query namedQuery = entityManager.createNamedQuery("getEventById");
+			Query namedQuery = entityManager.createNamedQuery("getSessionById");
 			namedQuery.setParameter("id", Integer.parseInt(id));
 			try {
 				result = (Session) namedQuery.getSingleResult();
@@ -165,7 +165,7 @@ public class SessionExposedBasic {
 		return new SessionWrapped(result, p);
 	}
 
-	public void incEventViews(Session e) {
+	public void incSessionViews(Session e) {
 		e.setViews(e.getViews() + 1);
 		createEntity(e);
 	}

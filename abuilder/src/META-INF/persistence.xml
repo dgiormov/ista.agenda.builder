@@ -7,9 +7,9 @@
 		<class>persistency.entities.LoggedUser</class>
 		<class>persistency.entities.Comment</class>
 		<class>persistency.entities.EnabledFunctionality</class>
-		<class>persistency.entities.Code</class>
-		<class>persistency.entities.Points</class>
+		<class>persistency.entities.PointsInstance</class>
 		<class>persistency.entities.PointsType</class>
+		<class>persistency.entities.PointsCategory</class>
 		<properties>
 			<property name="eclipselink.ddl-generation" value="create-tables"/>
 		</properties>

@@ -39,21 +39,21 @@ public class SessionResource {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response listAllSessions(@Context HttpServletRequest hsr, @QueryParam("date") int date) throws Exception {
-		SessionExposedBasic eventExposed = new SessionExposedBasic();
+		SessionExposedBasic sessionExposed = new SessionExposedBasic();
 		return Response.status(Response.Status.OK)
-				.entity(g.toJson(eventExposed.allEntitiesOnDate(hsr, date))).build();
+				.entity(g.toJson(sessionExposed.allEntitiesOnDate(hsr, date))).build();
 	}
 	
 	@GET
 	@Path("{id}")
 	public Response readConfiguration0(@PathParam("id") String id, @Context HttpServletRequest hsr)
 			throws Exception {
-		SessionExposedBasic eventExposed = new SessionExposedBasic();
+		SessionExposedBasic sessionExposed = new SessionExposedBasic();
 		LoggedUserExposed pe = new LoggedUserExposed();
 		LoggedUser currentUser = pe.getCurrentUser(hsr);
 		if (id != null) {
 			return Response.status(Response.Status.OK)
-					.entity(g.toJson(eventExposed.findEventByIdWrapped(id, currentUser))).build();
+					.entity(g.toJson(sessionExposed.findSessionByIdWrapped(id, currentUser))).build();
 		}
 		return Response.status(Response.Status.BAD_REQUEST)
 				.entity(g.toJson("")).build();
@@ -63,7 +63,7 @@ public class SessionResource {
 	@Path("/name")
 	public Response readName() throws Exception {
 		return Response.status(Response.Status.OK)
-				.entity(g.toJson(Constants.EVENT_NAME)).build();
+				.entity(g.toJson(Constants.SESSION_NAME)).build();
 	}
 
 	@GET
@@ -71,13 +71,13 @@ public class SessionResource {
 	@Produces("text/calendar")
 	public Response readConfiguration(@PathParam("id") String id)
 			throws Exception {
-		SessionExposedBasic eventExposed = new SessionExposedBasic();
+		SessionExposedBasic sessionExposed = new SessionExposedBasic();
 		if (id == null) {
 			return Response.status(Response.Status.OK)
-					.entity(g.toJson(eventExposed.findEventById(id))).build();
+					.entity(g.toJson(sessionExposed.findSessionById(id))).build();
 		}
 
-		ICalendarConverter calendar = new ICalendarConverter(eventExposed.findEventById(id));
+		ICalendarConverter calendar = new ICalendarConverter(sessionExposed.findSessionById(id));
 		// Generate your calendar here
 		ResponseBuilder builder = Response.ok();
 		builder.header("content-disposition",
@@ -90,9 +90,9 @@ public class SessionResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response createOrUpdate(String content) {
 		System.out.println(content);
-		SessionExposedBasic eventDao = new SessionExposedBasic();
+		SessionExposedBasic sessionDao = new SessionExposedBasic();
 		Session e = g.fromJson(content, Session.class);
-		eventDao.createEntity(e);
+		sessionDao.createEntity(e);
 		return Response
 				.status(Response.Status.BAD_REQUEST)
 				.entity("System DB Configuration API cannot create configurations with this name.").type("text/plain").build(); //$NON-NLS-1$ //$NON-NLS-2$
