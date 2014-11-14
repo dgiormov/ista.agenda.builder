@@ -1,4 +1,4 @@
-package persistency.entities;
+package persistency.entities.admin;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

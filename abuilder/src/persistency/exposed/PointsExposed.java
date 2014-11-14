@@ -4,10 +4,11 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import persistency.entities.PointsInstance;
 import persistency.entities.LoggedUser;
+import persistency.entities.gamification.PointsInstance;
 import utils.DBUtils;
 
 @SuppressWarnings("unchecked")
@@ -75,5 +76,17 @@ public class PointsExposed {
 			createEntity(pointsInstance);
 		}
 		
+	}
+
+	public PointsInstance fingById(int id) {
+		Query namedQuery = entityManager.createNamedQuery("getCodeById");
+		namedQuery.setParameter("id", id);
+		PointsInstance result = null;
+		try {
+			result = (PointsInstance) namedQuery.getSingleResult();
+		} catch (NoResultException e) {
+			result = null;
+		}
+		return result;
 	}
 }

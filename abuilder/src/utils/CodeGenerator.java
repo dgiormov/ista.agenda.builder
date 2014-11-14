@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import persistency.entities.PointsCategory;
-import persistency.entities.PointsInstance;
+import persistency.entities.gamification.PointsCategory;
+import persistency.entities.gamification.PointsInstance;
 
 public class CodeGenerator {
 
-	public static List<PointsInstance> generateCodes(int max, int codeLength,
-			List<PointsInstance> allCodes, PointsCategory category) {
+	public static List<PointsInstance> generateCodes(int max, List<PointsInstance> allCodes, PointsCategory category) {
+		int codeLength = category.getCodeLength();
 		List<PointsInstance> newCodes = new ArrayList<PointsInstance>();
 		for (int i = 0; i < max; i++) {
 			PointsInstance pi = generateCode(codeLength);
@@ -37,10 +37,9 @@ public class CodeGenerator {
 		return pi;
 	}
 
-	public static List<PointsInstance> generateCompsiteCodes(int max,
-			int codeLength, List<String> codePossitions,
+	public static List<PointsInstance> generateCompsiteCodes(int max, List<String> codePossitions,
 			List<PointsInstance> allCodes, PointsCategory category) {
-		List<PointsInstance> generatedCodes = generateCodes(max, codeLength, allCodes, category);
+		List<PointsInstance> generatedCodes = generateCodes(max, allCodes, category);
 		int index = 0;
 		for (PointsInstance pointsInstance : generatedCodes) {
 			pointsInstance.setCompositeCodeId(codePossitions.get(index++));

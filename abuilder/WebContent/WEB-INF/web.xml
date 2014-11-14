@@ -122,4 +122,24 @@
     <filter-name>AdminFilter</filter-name>
     <url-pattern>/admin/*</url-pattern>
   </filter-mapping>
+  <servlet>
+    <description></description>
+    <display-name>PointsCategs</display-name>
+    <servlet-name>PointsCategs</servlet-name>
+    <servlet-class>admin.PointsCategs</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>PointsCategs</servlet-name>
+    <url-pattern>/admin/points/categories</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>Codes</display-name>
+    <servlet-name>Codes</servlet-name>
+    <servlet-class>admin.Codes</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Codes</servlet-name>
+    <url-pattern>/admin/points/codes</url-pattern>
+  </servlet-mapping>
 </web-app>

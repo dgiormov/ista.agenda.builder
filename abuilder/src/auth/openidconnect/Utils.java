@@ -1,18 +1,12 @@
 package auth.openidconnect;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.security.KeyStore;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLContextSpi;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.oltu.oauth2.common.OAuthProviderType;
 
 import com.google.gson.Gson;
@@ -53,6 +47,16 @@ public final class Utils {
     		return provider.getProductiveClientId();
     	}
     	return null;
+    }
+    
+    public static final boolean isProductiveApplication(HttpServletRequest request){
+    	String host = request.getServerName();
+    	if(host.contains("localhost")){
+    		return false;	
+    	} else if(host.contains("hanatrial") && host.contains("dev")){
+    		return false;
+    	} 
+    	return true;
     }
     
     public static ProviderData getProvider(String name, HttpServletRequest request){

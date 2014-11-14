@@ -17,7 +17,6 @@ import com.google.gson.Gson;
 
 @Path("user")
 @Produces({ MediaType.APPLICATION_JSON })
-@SuppressWarnings({})
 public class LoggedUserREST {
 
 	private Gson g;

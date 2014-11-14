@@ -6,12 +6,14 @@
 		<class>persistency.entities.Speaker</class>
 		<class>persistency.entities.LoggedUser</class>
 		<class>persistency.entities.Comment</class>
-		<class>persistency.entities.EnabledFunctionality</class>
-		<class>persistency.entities.PointsInstance</class>
-		<class>persistency.entities.PointsType</class>
-		<class>persistency.entities.PointsCategory</class>
+		<class>persistency.entities.admin.EnabledFunctionality</class>
+		<class>persistency.entities.gamification.PointsInstance</class>
+		<class>persistency.entities.gamification.PointsCategory</class>
+		<class>persistency.entities.gamification.Rank</class>
+		<class>persistency.entities.feedback.Question</class>
+		<class>persistency.entities.feedback.Answer</class>
 		<properties>
-			<property name="eclipselink.ddl-generation" value="create-tables"/>
+			<property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
 		</properties>
 	</persistence-unit>
 </persistence>

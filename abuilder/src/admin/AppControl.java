@@ -11,8 +11,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import persistency.entities.EnabledFunctionality;
+import auth.openidconnect.Utils;
+import persistency.entities.admin.EnabledFunctionality;
 import persistency.exposed.EnabledFuncExposed;
+import persistency.exposed.LoggedUserExposed;
 import utils.SecurityException;
 
 /**
@@ -29,14 +31,14 @@ public class AppControl extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		LoggedUserExposed lue = new LoggedUserExposed();
 		if(request.getParameter("enable") != null){
 			logger.warn("Aplication is working in write mode now.");
-			setEnablement(null, true);
+			setEnablement(lue.getCurrentUser(request).getName(), true);
 			return;
-		}
-		if(request.getParameter("disable") != null){
+		} else if(request.getParameter("disable") != null){
 			logger.warn("Aplication is working in read only mode now.");
-			setEnablement(null, false);
+			setEnablement(lue.getCurrentUser(request).getName(), false);
 			return;
 		}
 	}
@@ -49,7 +51,10 @@ public class AppControl extends HttpServlet {
 		ee.createEntity(e);
 	}
 
-	public static boolean writeMode(){
+	public static boolean writeMode(HttpServletRequest request){
+		if(!Utils.isProductiveApplication(request)){
+			return true;
+		}
 		EnabledFuncExposed ee = new EnabledFuncExposed();
 		EnabledFunctionality entity = ee.getEntity();
 		if(entity != null && entity.getUserName() != null){

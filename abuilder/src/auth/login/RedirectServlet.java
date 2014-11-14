@@ -1,21 +1,33 @@
 package auth.login;
 
+import gamification.ExecuteAction;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.client.HttpClient;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
@@ -61,20 +73,26 @@ public class RedirectServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		LoggedUser user = processRequest(request, response);
+		ExecuteAction.getInstance().execute("login", user, null);
+	}
+
+	private LoggedUser processRequest(HttpServletRequest request,
+			HttpServletResponse response) throws IOException, ServletException {
+		LoggedUser user = null;
 		if(isAlreadyAuthenticatedThroughClient(request)){
-			authThroughClient(request, response);
-			return;
+			return authThroughClient(request, response);
 		} else {
 			Twitter twitter = (Twitter) request.getSession().getAttribute(Utils.TWITTER);
 			String provider = null;
-			if(twitter != null && request.getHeader("origin") != null && request.getHeader("origin").contains("twitter")){
+			if(twitter != null && request.getHeader("referer") != null && request.getHeader("referer").contains("twitter")){
 				provider = Utils.TWITTER;
 				RequestToken requestToken = (RequestToken) request.getSession().getAttribute("requestToken");
 				String verifier = request.getParameter("oauth_verifier");
 				try {
 					AccessToken authAccessToken = twitter.getOAuthAccessToken(requestToken, verifier);
 					request.getSession().removeAttribute("requestToken");
-					initOrCreateUserTwitter(request, response, twitter, authAccessToken);
+					user = initOrCreateUserTwitter(request, response, twitter, authAccessToken);
 				} catch (TwitterException e) {
 					throw new ServletException(e);
 				}
@@ -111,8 +129,7 @@ public class RedirectServlet extends HttpServlet {
 					response.addCookie(new Cookie("app", app));
 					provider = app;
 					oauthParams.setApplication(app);
-					initToken(oauthParams, request, response);
-
+					user = initToken(oauthParams, request, response);
 				} catch (OAuthProblemException e) {
 					StringBuffer sb = new StringBuffer();
 					sb.append("</br>");
@@ -129,6 +146,7 @@ public class RedirectServlet extends HttpServlet {
 			createLoginCookie(response, provider);
 			response.sendRedirect(request.getContextPath() + "/");
 		}
+		return user;
 	}
 
 	private void createLoginCookie(HttpServletResponse response, String provider) {
@@ -136,25 +154,26 @@ public class RedirectServlet extends HttpServlet {
 
 	}
 
-	private void initOrCreateUserTwitter(HttpServletRequest request,
+	private LoggedUser initOrCreateUserTwitter(HttpServletRequest request,
 			HttpServletResponse response, Twitter twitter, AccessToken authAccessToken) throws TwitterException, IOException {
 		String screenName = twitter.getScreenName();
-		long id = twitter.getId();
+//		long id = twitter.getId();
 		UserInfoJson result = new UserInfoJson();
 		result.setEmail(screenName);
-		result.setName(id+"");
+		result.setName(screenName+"");
 		result.setAccessToken(authAccessToken.getToken());
 		result.setSecretAccessToken(authAccessToken.getTokenSecret());
 		LoggedUserExposed lue = new LoggedUserExposed();
 		LoggedUser findPersonByOpenId = lue.createNewUser(Utils.TWITTER, result);
 		//backup 60 min
-		findPersonByOpenId.setSessionExpires(60*60);
+		findPersonByOpenId.setSessionExpires(System.currentTimeMillis()+60*60*1000);
 		lue.updateEntity(findPersonByOpenId);
 		LoginUtils.createCookie(response, Utils.TWITTER);
 		request.getSession().setAttribute(Utils.ACCESS_TOKEN_SESSION_KEY, findPersonByOpenId.getAccessToken());
+		return findPersonByOpenId;
 	}
 
-	private void initToken(OAuthParams oauthParams,
+	private LoggedUser initToken(OAuthParams oauthParams,
 			HttpServletRequest req, HttpServletResponse response) throws OAuthSystemException, IOException, ServletException {
 
 		try {
@@ -182,6 +201,7 @@ public class RedirectServlet extends HttpServlet {
 			} else if (Utils.GOOGLE.equalsIgnoreCase(app)){
 				cl = OpenIdConnectResponse.class;
 			}
+			initCACerts(app, req);
 			oauthResponse = client.accessToken(request, cl);
 
 			oauthParams.setAccessToken(oauthResponse.getAccessToken());
@@ -207,7 +227,7 @@ public class RedirectServlet extends HttpServlet {
 			if (Utils.GOOGLE.equalsIgnoreCase(app)){
 				fetchUserDataFromGoogle(oauthParams, oauthResponse);
 			}
-			initOrCreateUser(req, response, oauthParams);
+			return initOrCreateUser(req, response, oauthParams);
 		} catch (ApplicationException e) {
 			oauthParams.setErrorMessage(e.getMessage());
 			throw new ServletException(e);
@@ -222,6 +242,32 @@ public class RedirectServlet extends HttpServlet {
 			throw new ServletException(sb.toString());
 		}
 	}
+	
+	
+	private void initCACerts(String app, HttpServletRequest req) {
+		KeyStore trustStore;
+		try {
+			trustStore = KeyStore.getInstance("JKS");
+			trustStore.load(req.getServletContext().getResourceAsStream(app+".jks"), "123456".toCharArray());
+
+			KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+			KeyManager[] kms = kmf.getKeyManagers();
+
+			TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+			tmf.init(trustStore);
+			TrustManager[] tms = tmf.getTrustManagers();
+
+			SSLContext sslContext = null;
+			sslContext = SSLContext.getInstance("TLS");
+			sslContext.init(kms, tms, new SecureRandom());
+
+			HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	private void fetchUserDataFromGoogle(OAuthParams oauthParams,
 			OAuthAccessTokenResponse oauthResponse)
 					throws MalformedURLException, ServletException {
@@ -240,7 +286,7 @@ public class RedirectServlet extends HttpServlet {
 		}
 	}
 
-	private void initOrCreateUser(HttpServletRequest request,
+	private LoggedUser initOrCreateUser(HttpServletRequest request,
 			HttpServletResponse response, OAuthParams oauthParams) throws IOException {
 		LoggedUserExposed lue = new LoggedUserExposed();
 		Gson g = new Gson();
@@ -288,6 +334,7 @@ public class RedirectServlet extends HttpServlet {
 		LoginUtils.createCookie(response, oauthParams.getApplication());
 		lue.updateEntity(findPersonByOpenId);
 		request.getSession().setAttribute(Utils.ACCESS_TOKEN_SESSION_KEY, findPersonByOpenId.getAccessToken());
+		return findPersonByOpenId;
 	}
 
 	private UserInfoJson assembleUserInfo(Gson g, String userInfoString,
@@ -367,11 +414,11 @@ public class RedirectServlet extends HttpServlet {
 		return null;
 	}
 
-	private void authThroughClient(HttpServletRequest request, HttpServletResponse response) throws IOException{
+	private LoggedUser authThroughClient(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		OAuthParams oauthParams = new OAuthParams();
 		oauthParams.setAccessToken(request.getHeader(Utils.ACCESS_TOKEN_SESSION_KEY));
 		oauthParams.setApplication(request.getHeader("provider"));
-		initOrCreateUser(request, response, oauthParams);	
+		return initOrCreateUser(request, response, oauthParams);	
 	}
 
 	private boolean isAlreadyAuthenticatedThroughClient(HttpServletRequest request){

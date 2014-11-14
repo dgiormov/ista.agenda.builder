@@ -1,5 +1,7 @@
 package service.rest;
 
+import gamification.ExecuteAction;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
@@ -28,6 +30,7 @@ import persistency.exposed.CommentsExposedBasic;
 import persistency.exposed.LoggedUserExposed;
 import persistency.exposed.SessionExposedBasic;
 import service.rest.wrappers.CommentBasic;
+import utils.Status.STATE;
 import admin.AppControl;
 
 import com.google.gson.Gson;
@@ -56,11 +59,15 @@ public class CommentsResource {
 	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response placeComment(@Context HttpServletRequest request, @PathParam("id") String sessionId) throws IOException{
+		Gson g = new Gson();
+		if (!AppControl.writeMode(request)) {
+			return Response.status(405).entity(g.toJson(new utils.Status(STATE.ERROR, "Comments will be ebabled a few days be. "))).build();
+		}
 		String inReplyOf = request.getParameter("inReplyOf");;
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(request.getInputStream(), writer, "UTF-8");
 		String theString = writer.toString();
-		Gson g = new Gson();
+		
 		Data fromJson = g.fromJson(theString, Data.class);
 		SessionExposedBasic ee = new SessionExposedBasic();
 		Session session = ee.findSessionById(sessionId);
@@ -81,14 +88,15 @@ public class CommentsResource {
 		ce.createEntity(c);
 		person.addComment(c);
 		pe.updateEntity(person);
+		ExecuteAction.getInstance().execute("comment", person, null);
 		return Response.ok().build();
 	}
 
 	@POST
 	@Path("{id}/like")
 	public Response likeUnlike(@Context HttpServletRequest request, @PathParam("id") Integer commentId){
-		if(!AppControl.writeMode()){
-			//			return Response.status(Status.BAD_REQUEST).build();
+		if(!AppControl.writeMode(request)){
+			return Response.status(Status.BAD_REQUEST).build();
 		}
 		if(commentId == null){
 			return Response.status(Status.BAD_REQUEST).build();
@@ -116,7 +124,12 @@ public class CommentsResource {
 				}
 				pe.updateEntity(p);
 				ce.updateEntity(comment);
-				LoggedUser cowner = pe.findPersonById(comment.getCowner().getId()+"");
+				LoggedUser cowner = pe.findPersonById(comment.getCowner().getId());
+				ExecuteAction.getInstance().execute("liked", cowner, null);
+				if(comment.getLikes() >= 5){
+					cowner.updateLiked5Points(comment);	
+				}
+
 				pe.updateEntity(cowner);
 			}
 		}

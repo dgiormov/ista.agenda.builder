@@ -23,6 +23,7 @@ public class SpeakerExposed {
 
 	public void createEntity(Speaker e) {
 		if (findUserById(e.getId()) != null) {
+			updateEntity(e);
 			return;
 		}
 		EntityTransaction transaction = entityManager.getTransaction();
@@ -37,7 +38,7 @@ public class SpeakerExposed {
 		if (findUserById != null) {
 			EntityTransaction transaction = entityManager.getTransaction();
 			transaction.begin();
-			entityManager.persist(e);
+			entityManager.merge(e);
 			transaction.commit();
 		}
 

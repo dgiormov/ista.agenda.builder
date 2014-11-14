@@ -25,6 +25,9 @@ import javax.persistence.OneToOne;
 
 import org.eclipse.persistence.annotations.Index;
 
+import persistency.entities.gamification.PointsCategory;
+import persistency.entities.gamification.PointsInstance;
+import persistency.exposed.PointsCategoryExposed;
 import persistency.exposed.PointsExposed;
 import utils.PointsHelper;
 import utils.Status;
@@ -77,7 +80,7 @@ public class LoggedUser implements Serializable {
 	private PointsInstance puzzlePiece;
 	
 	@OneToMany(mappedBy="enteredBy")
-	private List<PointsInstance> codes = new ArrayList<PointsInstance>();
+	private List<PointsInstance> pointsIntances = new ArrayList<PointsInstance>();
 	
 	@ManyToMany(mappedBy="likedBy")
 	private List<Comment> likedComments = new ArrayList<Comment>();
@@ -189,36 +192,17 @@ public class LoggedUser implements Serializable {
 		strikes = 10;
 	}
 	
-	public boolean canPlay(){
-		return getName() != null;
-	}
-	
 	public Status addCode(PointsInstance code){
-		if(code.isUsed()){
-			return new Status(STATE.ERROR, "This code has been used.");
-		}
-		if(code.getEnteredBy() != null && !this.getUserName().equals(code.getEnteredBy().getUserName())) {
-			return new Status(STATE.ERROR, "This code has been used by "+code.getEnteredBy().getName());
-		}
-		int maxCodesOfThisType = code.getCategory().getMaxInstacesPerPerson();
-		List<PointsInstance> allCodesOfAType = findAllCodesOfAType(code.getCategory());
-		if(allCodesOfAType.size() >= maxCodesOfThisType) {
-			return new Status(STATE.ERROR, "Sorry the rules do not allow you to enter more codes of this type ("+code.getCategory().getName()+").");
-		}
-		PointsExposed ce = new PointsExposed();
-		code.setUsed(true);
-		code.setEnteredBy(this);
-		ce.updateEntity(code);
-		if(!getCodes().contains(code)){
-			getCodes().add(code);	
+		if(!getPointsInstances().contains(code)){
+			getPointsInstances().add(code);	
 		}
 		return new Status(STATE.OK, code.getCategory().getPoints()); 
 	}
-
-	private List<PointsInstance> findAllCodesOfAType(PointsCategory c) {
+	
+	private List<PointsInstance> findAllPointsOfAType(PointsCategory c) {
 		List<PointsInstance> result = new ArrayList<PointsInstance>();
-		if(getCodes() != null){
-			for (PointsInstance code : getCodes()) {
+		if(getPointsInstances() != null){
+			for (PointsInstance code : getPointsInstances()) {
 				if(code.getCategory().equals(c)){
 					result.add(code);
 				}
@@ -252,8 +236,8 @@ public class LoggedUser implements Serializable {
 		this.puzzlePiece = puzzlePiece;
 	}
 
-	public List<PointsInstance> getCodes() {
-		return codes;
+	public List<PointsInstance> getPointsInstances() {
+		return pointsIntances;
 	}
 
 	public Map<Integer, String> getViktorina() {
@@ -297,7 +281,7 @@ public class LoggedUser implements Serializable {
 	}
 
 	public int getPoints() {
-		List<PointsInstance> codes2 = getCodes();
+		List<PointsInstance> codes2 = getPointsInstances();
 		int points = 0;
 		for (PointsInstance pointsInstance : codes2) {
 			points+=pointsInstance.getCategory().getPoints();
@@ -305,4 +289,72 @@ public class LoggedUser implements Serializable {
 		return points;
 	}
 
+	public List<PointsInstance> getPointsInstancesOfCategory(
+			PointsCategory pointsCategory) {
+		List<PointsInstance> result = new ArrayList<PointsInstance>();
+		List<PointsInstance> instances = getPointsInstances();
+		if(instances != null){
+			for (PointsInstance pointsInstance : instances) {
+				if(pointsInstance.getCategory().getId() == pointsCategory.getId()){
+					result.add(pointsInstance);
+				}
+			}
+		}
+		return result;
+	}
+
+	public void updateRatingPoints(Map<Integer, Integer> ratings, Session session, boolean add) {
+		String shortCode = "ratesession";
+		String who = "Rated Session: ";
+		if(ratings == getSpeakerRatings()){
+			shortCode = "ratespeaker";
+			who = "Rated Speaker(s): ";
+		}
+		PointsCategoryExposed pce = new PointsCategoryExposed();
+		PointsCategory category = pce.findCategoryByShortName(shortCode);
+		List<PointsInstance> allPointsOfAType = findAllPointsOfAType(category);
+		PointsInstance p = null;
+		String pointsDescription = who+session.getName();
+		for (PointsInstance pointsInstance : allPointsOfAType) {
+			if(pointsInstance.getDescription().equals(pointsDescription)){
+				p = pointsInstance;
+				break;
+			}
+		}
+		
+		if(add){
+			if(p == null){
+				PointsInstance instance = category.createPointsInstance(this, pointsDescription);
+				getPointsInstances().add(instance);
+			}
+		} else {
+			if(p!=null){
+				PointsExposed pe = new PointsExposed();
+				pe.deleteEntity(p);
+				getPointsInstances().remove(p);
+			}
+		}
+	}
+	
+	public void updateLiked5Points(Comment comment) {
+		String commentId = comment.getId()+"";
+		String who = "Liked5 on comment: ";
+		
+		PointsCategoryExposed pce = new PointsCategoryExposed();
+		PointsCategory category = pce.findCategoryByShortName("liked5");
+		List<PointsInstance> allPointsOfAType = findAllPointsOfAType(category);
+		PointsInstance p = null;
+		String pointsDescription = who+commentId;
+		for (PointsInstance pointsInstance : allPointsOfAType) {
+			if(pointsInstance.getDescription().equals(pointsDescription)){
+				p = pointsInstance;
+				break;
+			}
+		}
+
+		if(p == null){
+			PointsInstance instance = category.createPointsInstance(this, pointsDescription);
+			getPointsInstances().add(instance);
+		}
+	}
 }

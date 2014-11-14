@@ -1,0 +1,18 @@
+[
+{
+"rankPos": 3,
+"rankName": "Diamond",
+"rankRequirements":["login","prepare", "share", "comment", "ratesession", "ratespeaker", "top100", "fillupsurvey", "liked5", "tshirt"]
+},
+{
+"rankPos": 2,
+"rankName": "Gold",
+"rankRequirements":["login","prepare", "share", "comment", "ratesession", "ratespeaker", "top100"],
+"rankRequirementsAlt":["attended2days"]
+},
+{
+"rankPos": 1,
+"rankName": "User",
+"rankRequirements":["login","prepare", "share"]
+}
+]

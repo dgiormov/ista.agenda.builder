@@ -24,6 +24,7 @@ public class SessionWrapped {
 	private String track;
 	private boolean hasSecret;
 	private int rating;
+	private int speakerRating;
 
 	public SessionWrapped(Session e, LoggedUser p) {
 		id = e.getId();
@@ -45,10 +46,13 @@ public class SessionWrapped {
 		track = e.getTrack();
 		date = e.getDate();
 		rating = 0;
+		speakerRating = 0;
 		if(p != null){
 			isAnsweredAlready = p.getViktorina().get(e.getId()) != null;
 			Integer integer = p.getSessionRatings().get(e.getId());
 			rating = integer == null ? 0 : integer;
+			integer = p.getSpeakerRatings().get(e.getId());
+			speakerRating  = integer == null ? 0 : integer;
 		}
 		hasSecret = e.getSecretWord()!=null &&  !isAnsweredAlready;
 	}

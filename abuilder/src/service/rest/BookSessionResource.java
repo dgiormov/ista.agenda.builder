@@ -1,5 +1,7 @@
 package service.rest;
 
+import gamification.ExecuteAction;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -20,8 +22,6 @@ import persistency.exposed.SessionExposedBasic;
 @Path("book/session")
 public class BookSessionResource {
 
-	
-	private static final float RATE_LIMIT = 10;
 	
 	@POST
 	public Response bookSession(@Context HttpServletRequest request, @QueryParam("id") String sessionId, @QueryParam("isSelected") Boolean isSelectedString){
@@ -50,6 +50,7 @@ public class BookSessionResource {
 			person.getSessions().remove(session);
 		}
 		pe.updateEntity(person);
+		ExecuteAction.getInstance().execute("prepare", person, null);
 		return Response.status(Status.OK).build();
 	}
 	

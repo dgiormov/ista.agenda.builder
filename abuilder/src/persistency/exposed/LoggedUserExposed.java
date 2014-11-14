@@ -43,9 +43,9 @@ public class LoggedUserExposed {
 		transaction.commit();
 	}
 
-	public LoggedUser findPersonById(String id) {
+	public LoggedUser findPersonById(long id) {
 		Query namedQuery = entityManager.createNamedQuery("getPersonById");
-		namedQuery.setParameter("id", Long.parseLong(id));
+		namedQuery.setParameter("id", id);
 		LoggedUser result = null;
 		try {
 			result = (LoggedUser) namedQuery.getSingleResult();

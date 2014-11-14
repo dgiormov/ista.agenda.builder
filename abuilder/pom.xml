@@ -8,7 +8,7 @@
   <repositories>
   	<repository>
   		<id>Apache repository</id>
-  		<url>https://repository.apache.org</url>
+  		<url>https://repository.apache.org/snapshots</url>
   	</repository>
   </repositories>
   <build>

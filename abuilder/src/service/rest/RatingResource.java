@@ -3,7 +3,6 @@ package service.rest;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -18,9 +17,13 @@ import persistency.entities.LoggedUser;
 import persistency.entities.Session;
 import persistency.exposed.LoggedUserExposed;
 import persistency.exposed.SessionExposedBasic;
-import admin.AppControl;
+import utils.Status.STATE;
+import utils.TimeStopper;
+
+import com.google.gson.Gson;
 
 @Path("rating")
+@Produces(MediaType.APPLICATION_JSON)
 public class RatingResource {
 
 	
@@ -40,27 +43,23 @@ public class RatingResource {
 	
 	@POST
 	@Path("/speaker")
-	public Response rateSpeaker(@Context HttpServletRequest requst, @FormParam("rating") String rating, @FormParam("sessionId") String sessionId){
+	public Response rateSpeaker(@Context HttpServletRequest requst, @QueryParam("rating") String rating, @QueryParam("sessionId") String sessionId){
 		LoggedUserExposed pe = new LoggedUserExposed();
 		LoggedUser person = pe.getCurrentUser(requst);
 		
-		if (person == null || requst.getUserPrincipal() == null) {
+		if (person == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		return rateGeneric(requst, person, rating, sessionId, person.getSpeakerRatings());
 	}
 	
 	private Response rateGeneric(HttpServletRequest request, LoggedUser person, String rating, String sessionId, Map<Integer, Integer> ratings){
-		if (!AppControl.writeMode()) {
-//FIXME			return Response.status(Status.PAYMENT_REQUIRED).entity("You can only rate session during the session.").build();
-		}
 
 		if (sessionId == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		if (rating == null) {
 			return Response.status(Status.BAD_REQUEST).build();
-			
 		}
 		Integer bin0 = Integer.parseInt(rating);
 		if (bin0 == null || bin0 > 5 || bin0 < 0) {
@@ -71,6 +70,11 @@ public class RatingResource {
 		if (session == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
+		long timeToSessionAndHalf = TimeStopper.timeToSessionAndHalf(session);
+		if(timeToSessionAndHalf < 0){
+			timeToSessionAndHalf = timeToSessionAndHalf*(-1);
+			return Response.status(Status.PRECONDITION_FAILED).entity((new Gson()).toJson(new utils.Status(STATE.ERROR, "You can only rate during or after the session. Time left: "+timeToSessionAndHalf+" min"))).build();
+		}
 		if (checkForConflictingTalks(ratings, session, ee)) {
 			return Response.status(Status.NOT_ACCEPTABLE).entity("It is quite impossible for you to have attended all these sessions.").build();
 		}
@@ -78,9 +82,11 @@ public class RatingResource {
 		if(bin0 == 0){
 			if(isContained){
 				ratings.remove(session.getId());
+				person.updateRatingPoints(ratings, session, false);
 			}
 		} else {
 			ratings.put(session.getId(), bin0);
+			person.updateRatingPoints(ratings, session, true);
 		}
 		LoggedUserExposed pe = new LoggedUserExposed();
 		pe.updateEntity(person);

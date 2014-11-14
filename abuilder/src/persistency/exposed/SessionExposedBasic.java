@@ -48,6 +48,12 @@ public class SessionExposedBasic {
 		return resultList;
 	}
 	
+	public List<Session> allEntitiesRaw() {
+		Query namedQuery = entityManager.createNamedQuery("allSessionsSQL");
+		List<Session> sessionList = namedQuery.getResultList();
+		return sessionList;
+	}
+	
 	public List<SessionBasic> allEntitiesOnDate(HttpServletRequest hsr, int date) {
 		List<SessionBasic> allEntities = allEntities(hsr);
 		List<SessionBasic> entriesOnDate = new ArrayList<SessionBasic>();

@@ -4,7 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
-import persistency.entities.EnabledFunctionality;
+import persistency.entities.admin.EnabledFunctionality;
 import utils.DBUtils;
 
 public class EnabledFuncExposed {

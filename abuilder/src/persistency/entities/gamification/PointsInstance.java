@@ -1,4 +1,4 @@
-package persistency.entities;
+package persistency.entities.gamification;
 
 import java.io.Serializable;
 
@@ -6,11 +6,19 @@ import javax.persistence.*;
 
 import org.eclipse.persistence.annotations.Index;
 
+import persistency.entities.LoggedUser;
+
 /**
  * Entity implementation class for Entity: Code
  *
  */
 @Entity
+@NamedQueries({
+	@NamedQuery(name = "allCodes", query = "SELECT e FROM PointsInstance e"),
+	@NamedQuery(name = "getCode", query = "SELECT e FROM PointsInstance e WHERE e.code = :code"),
+	@NamedQuery(name = "getCodeById", query = "SELECT e FROM PointsInstance e WHERE e.id = :id")
+	
+})
 public class PointsInstance implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -19,8 +27,10 @@ public class PointsInstance implements Serializable {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
 	
-	@Index(unique=true)
+	@Index
 	private String code;
+	
+	private String description;
 
 	private String compositeCodeId;
 	
@@ -58,13 +68,18 @@ public class PointsInstance implements Serializable {
 
 	@Override
 	public String toString() {
-		return getCategory().getName() + (getCategory().getPoints());
+		return getCategory().getName() +" ("+ getCategory().getPoints()+") "+ code;
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
 		if(PointsInstance.class.isInstance(obj)){
-			return ((PointsInstance) obj).getCode().equals(getCode());
+			if(getCode() != null){
+				return getCode().equals(((PointsInstance) obj).getCode());
+			}
+			if(getId() == ((PointsInstance) obj).getId()){
+				return true;
+			}
 		}
 		return super.equals(obj);
 	}
@@ -84,4 +99,21 @@ public class PointsInstance implements Serializable {
 	public void setCategory(PointsCategory category) {
 		this.category = category;
 	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 }

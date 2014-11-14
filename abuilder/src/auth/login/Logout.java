@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import auth.openidconnect.Utils;
 import persistency.entities.LoggedUser;
 import persistency.exposed.LoggedUserExposed;
+import utils.LoginUtils;
 
 /**
  * Servlet implementation class Logout
@@ -26,6 +27,7 @@ public class Logout extends HttpServlet {
 		currentUser.setSessionExpires(0);
 		lue.updateEntity(currentUser);
 		request.getSession().removeAttribute(Utils.ACCESS_TOKEN_SESSION_KEY);
+		LoginUtils.invalidateCookie(request);
 		response.sendRedirect("/");
 	}
 
