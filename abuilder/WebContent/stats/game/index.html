@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Players</title>
+<script src="https://code.jquery.com/jquery-latest.min.js"
+	type="text/javascript"></script>
+<script>
+$(document).ready(function(){
+	$.getJSON("/rest/stats/game",function(result){
+		
+		var table = "<table border='1'><tr><td>Total Players</td><td>" + result.allPlayers + "</td></tr>"+
+		"<tr><td>Players total score</td><td>" + result.totalScore + "</td></tr>"+
+		"<tr><td>Players total likes</td><td>" + result.totalLikes + "</td></tr>"+
+		"<tr><td>All players comments</td><td>" + result.totalComments + "</td></tr>";
+		
+		for(i = 0; i < result.topComments.length && i < 3; i++){
+			table += "<tr><td>Most liked comments " + (i+1) + "</td><td>" + result.topComments[i].text +" " + result.topComments[i].likes + "</td></tr>";
+		}
+		
+		table += "</table>";
+		
+		document.getElementById("table").innerHTML = table; 
+	});
+}); 
+
+</script>
+
+</head>
+<body>
+
+	<div id="table">
+	</div>
+
+</body>
+</html>

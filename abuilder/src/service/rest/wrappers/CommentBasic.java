@@ -12,6 +12,10 @@ import persistency.exposed.LoggedUserExposed;
 public class CommentBasic {
 
 	private int id;
+	public int getId() {
+		return id;
+	}
+
 	private String name;
 	private String text;
 	private int likes;

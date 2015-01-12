@@ -30,6 +30,7 @@ public class Speaker implements Serializable {
 	private String country;
 	private String city;
 	private String job_title;
+	private String picture;
 	private long clickedUpon = 0;
 
 	private static final long serialVersionUID = 1L;
@@ -116,6 +117,7 @@ public class Speaker implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "{name: "+name+ " company: "+company+" job title: "+job_title+"}";
+//		return "{name: "+name+ " company: "+company+" job title: "+job_title+"}";
+		return name;
 	}
 }

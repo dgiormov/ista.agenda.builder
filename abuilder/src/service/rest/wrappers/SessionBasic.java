@@ -21,6 +21,10 @@ public class SessionBasic implements Comparable<SessionBasic>{
 	private String name;
 	private String demo = "yes";
 	private List<String> speakers;
+	public List<String> getSpeakers() {
+		return speakers;
+	}
+
 	private String room;
 	private String searchTerms;
 	private List<String> tags;

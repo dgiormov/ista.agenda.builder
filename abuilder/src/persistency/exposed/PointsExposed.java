@@ -53,7 +53,12 @@ public class PointsExposed {
 	public PointsInstance getCode(String code) {
 		Query namedQuery = entityManager.createNamedQuery("getCode");
 		namedQuery.setParameter("code", code);
-		return (PointsInstance) namedQuery.getSingleResult();
+		try {
+			return (PointsInstance) namedQuery.getSingleResult();
+		} catch (NoResultException e){
+			return null;
+		}
+				
 	}
 	
 	public List<PointsInstance> getCodesByType(String type, LoggedUser p) {

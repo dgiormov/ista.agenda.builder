@@ -20,7 +20,7 @@ import javax.persistence.Transient;
 	@NamedQuery(name = "allCommentsByUser", query = "SELECT e FROM Comment e WHERE e.cowner.id = :id"),
 	@NamedQuery(name = "commentById", query = "SELECT e FROM Comment e WHERE e.id = :id")})
 @Entity
-public class Comment {
+public class Comment implements Comparable<Comment>{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -92,11 +92,18 @@ public class Comment {
 		}
 		if(obj instanceof Comment){
 			Comment c = (Comment) obj;
-			return (c.getCowner().getId() == this.cowner.getId()) && 
-					(c.getText().equals(this.getText())) &&
+			return (c.getCowner() != null && this.cowner != null && c.getCowner().getId() == this.cowner.getId()) && 
+					equalStrings(c.getText(), this.getText()) &&
 					(c.getSession().getId() == this.getSession().getId());
 		}
 		return false;
+	}
+
+	private boolean equalStrings(String c1, String c2) {
+		if(c1 != null && c2 != null){
+			return c1.equals(c2);
+		}
+		return c1 == c2;
 	}
 	
 	@Override
@@ -110,5 +117,10 @@ public class Comment {
 
 	public void setLikedBy(List<LoggedUser> likedBy) {
 		this.likedBy = likedBy;
+	}
+
+	@Override
+	public int compareTo(Comment o) {
+		return o.getLikes() - getLikes();
 	}
 }

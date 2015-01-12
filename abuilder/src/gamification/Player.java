@@ -3,14 +3,15 @@ package gamification;
 import java.util.List;
 
 import persistency.entities.LoggedUser;
-import persistency.entities.gamification.PointsInstance;
+import persistency.entities.gamification.PointsCategory;
 
 public class Player implements Comparable<Player> {
 
 	private long id;
 	private String name;
 	private long points = 0;
-	private int rank = 0;
+	private String rank = "";
+	private int rankInt = 0;
 	private int position = 0;
 	
 	public Player(LoggedUser p) {
@@ -20,31 +21,35 @@ public class Player implements Comparable<Player> {
 		setRank(computeRank(p));
 	}
 
-	private int computeRank(LoggedUser p) {
-		List<PointsInstance> pointsInstances = p.getPointsInstances();
-		int rankRaw = 0;
-		for (PointsInstance pointsInstance : pointsInstances) {
-			int rank = pointsInstance.getCategory().getRank();
+	private String computeRank(LoggedUser p) {
+		List<PointsCategory> uniqueCategories = p.getUniqueCategories();
+		
+		int rankRaw1 = 0;
+		int rankRaw2 = 0;
+		int rankRaw3 = 0;
+		for(PointsCategory cat : uniqueCategories) {
+			int rank = cat.getRank();
 			switch (rank) {
 				case 1:
-					rankRaw += rank*100;
+					rankRaw1 += 1;
 					break;
 				case 2:
-					rankRaw += rank*10;
+					rankRaw2 += 1;
 					break;
 				case 3:
-					rankRaw += rank*1;
+					rankRaw3 += 1;
 					break;
 			}
 		}
-		if(rankRaw >= 333){
-			return 3;
-		} else if(rankRaw >=330){
-			return 2;
-		} else if(rankRaw >=300){
-			return 1;
+		rankInt = 0;
+		if(rankRaw1 >= 3 && rankRaw2 >=3 && rankRaw3 >=3){
+			rankInt = 3;
+		} else if(rankRaw1 >= 3 && rankRaw2 >=3){
+			rankInt = 2;
+		} else if(rankRaw1 >= 3){
+			rankInt = 1;
 		}
-		return 0;
+		return "rank"+rankInt;
 	}
 
 	public long getPoints() {
@@ -71,11 +76,15 @@ public class Player implements Comparable<Player> {
 		return id;
 	}
 
-	public int getRank() {
+	public String getRank() {
 		return rank;
 	}
 
-	private void setRank(int rank) {
+	private void setRank(String rank) {
 		this.rank = rank;
+	}
+
+	public int getRankInt() {
+		return rankInt;
 	}
 }

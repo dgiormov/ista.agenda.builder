@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityTransaction;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,13 +16,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import persistency.entities.Comment;
 import persistency.entities.LoggedUser;
 import persistency.entities.Session;
 import persistency.entities.Speaker;
 import persistency.entities.admin.EnabledFunctionality;
+import persistency.entities.feedback.Question;
 import persistency.entities.gamification.PointsCategory;
 import persistency.entities.gamification.PointsInstance;
 import persistency.entities.gamification.Rank;
+import persistency.exposed.CommentsExposedBasic;
 import persistency.exposed.EnabledFuncExposed;
 import persistency.exposed.LoggedUserExposed;
 import persistency.exposed.PointsCategoryExposed;
@@ -29,6 +33,7 @@ import persistency.exposed.PointsExposed;
 import persistency.exposed.RanksExposed;
 import persistency.exposed.SessionExposedBasic;
 import persistency.exposed.SpeakerExposed;
+import persistency.exposed.feedback.QuestionExposed;
 import persistency.exposed.json.RankJson;
 import persistency.exposed.json.SessionJson;
 import service.rest.wrappers.SessionBasic;
@@ -47,6 +52,7 @@ public class InitDatabase extends HttpServlet {
 	
 	private static final String SESSIONS_JSON_LOCATION = DATA_LOCATION+"sessions.json";
 	private static final String SPEAKERS_JSON_LOCATION = DATA_LOCATION+"speakers.json";
+	private static final String QUESTIONS_JSON_LOCATION = DATA_LOCATION+"questions.json";
 	private static final String RANKS_JSON_LOCATION = DATA_LOCATION+"ranks.json";
 	private static final String POINTS_CATEGORIES_LOCATION = DATA_LOCATION+"points_categories.json";
 
@@ -69,8 +75,9 @@ public class InitDatabase extends HttpServlet {
 				logger.warn("Full Init");
 				initSessions(request, response);
 				initReadOnlyMode(request);
+				initQuestions(request, false);
 				initCodes(request);
-			} else if (request.getParameter("reset") != null) {
+			} else if (request.getParameter("reset_ratings") != null) {
 				logger.warn("ratings reset");
 				response.getWriter().print("Ratings reset...");
 				LoggedUserExposed lue = new LoggedUserExposed();
@@ -78,9 +85,25 @@ public class InitDatabase extends HttpServlet {
 				for (LoggedUser person : allPersons) {
 					person.getSessionRatings().clear();
 					person.getSpeakerRatings().clear();
+					person.getPointsInstances().clear();
 					lue.updateEntity(person);
 				}
 				response.getWriter().print("[FAILED]");
+			} else if (request.getParameter("full_reset") != null) {
+				logger.warn("ratings reset");
+				response.getWriter().print("Master Reset...");
+				
+				LoggedUserExposed lue = new LoggedUserExposed();
+				List<LoggedUser> allPersons = lue.getAllPersons();
+				for (LoggedUser person : allPersons) {
+					person.getSessionRatings().clear();
+					person.getSpeakerRatings().clear();
+					person.getLikedComments().clear();
+					person.getPointsInstances().clear();
+					lue.updateEntity(person);
+				}
+				clearPointsInstances();
+				response.getWriter().print("[OK]");
 			} else if (request.getParameter("reread") != null) {
 				logger.warn("Reread session data");
 				mergeInfo(request, response);
@@ -95,9 +118,29 @@ public class InitDatabase extends HttpServlet {
 				response.getWriter().print("Ranks initializing...");
 				initGamificationRanks(request, true);
 				response.getWriter().print("[OK]");
+			} else if(request.getParameter("questions") != null){
+				initQuestions(request, true);
 			}
 		} catch (SecurityException e1) {
 			logger.warn("Failed access to InitDatabase by " + e1.getMessage());
+		}
+	}
+	
+	private void clearPointsInstances() {
+		PointsCategoryExposed pce = new PointsCategoryExposed();
+		List<PointsCategory> list = pce.allCodes();
+		for (PointsCategory pointsCategory : list) {
+			if(pointsCategory.isSelfGeneratingInstances()){
+				pointsCategory.getInstancesOfThisType().clear();
+				pce.updateEntity(pointsCategory);
+			}
+		}
+		PointsExposed pe = new PointsExposed();
+		List<PointsInstance> allCodes = pe.allCodes();
+		for (PointsInstance pointsInstance : allCodes) {
+			if(pointsInstance.getCategory().isSelfGeneratingInstances()){
+				pe.deleteEntity(pointsInstance);
+			}
 		}
 	}
 
@@ -204,10 +247,13 @@ public class InitDatabase extends HttpServlet {
 		Gson g = new Gson();
 		List<RankJson> ranks = g.fromJson(rankTypes, new TypeToken<List<RankJson>>(){}.getType());
 		RanksExposed re = new RanksExposed();
-		//FIXME integrate ranks
 		for (RankJson rankJson : ranks) {
 			Rank entity = rankJson.toEntity();
-			re.createEntity(entity);
+			if(re.findRankById(entity.getRankPos()) != null){
+				re.updateEntity(entity);	
+			} else {
+				re.createEntity(entity);
+			}
 		}
 	}
 
@@ -226,10 +272,11 @@ public class InitDatabase extends HttpServlet {
 			} else {
 				if(merge){
 					updateCategory(category, categoryDb, pce);
-					continue;
+					category = categoryDb;
 				}
 			}
-			if(category.isCodeCategory()){
+			int size = category.getInstancesOfThisType() == null ? 0 : category.getInstancesOfThisType().size();
+			if(category.isCodeCategory() && size < category.getMaxNumberOfInstances()){
 				int max = category.getMaxNumberOfInstances();
 				List<String> codePossitions = category.getCompositeCodePossitions();
 				List<PointsInstance> pi;
@@ -240,31 +287,30 @@ public class InitDatabase extends HttpServlet {
 				}
 				System.out.println(pi);
 				pe.persistEntities(pi);
-				category.setInstancesOfThisType(pi);
+				category.addInstances(pi);
 				pce.updateEntity(category);
 				allCodes.addAll(pi);
 			}
 		}
 	}
 
-	private void updateCategory(PointsCategory categoryOrigin,
-			PointsCategory categoryTarget, PointsCategoryExposed pce) {
-		categoryTarget.setAreCompositeCodes(categoryOrigin.areCompositeCodes());
-		categoryTarget.setCodeLength(categoryOrigin.getCodeLength());
-		categoryTarget.setCompositeCodePossitions(categoryOrigin.getCompositeCodePossitions());
-		categoryTarget.setDescription(categoryOrigin.getDescription());
-//		categoryTarget.setInstancesOfThisType(categoryOrigin.getInstancesOfThisType());
-		categoryTarget.setMaxInstacesPerPerson(categoryOrigin.getMaxInstacesPerPerson());
-		categoryTarget.setMaxNumberOfInstances(categoryOrigin.getMaxNumberOfInstances());
-		categoryTarget.setName(categoryOrigin.getName());
-		categoryTarget.setPlayerPositionAbove(categoryOrigin.getPlayerPositionAbove());
-		categoryTarget.setPoints(categoryOrigin.getPoints());
-		categoryTarget.setRank(categoryOrigin.getRank());
-		categoryTarget.setRequiresPlayerLevel(categoryOrigin.getRequiresPlayerLevel());
-		categoryTarget.setReusable(categoryOrigin.isReusable());
-		categoryTarget.setSelfGeneratingInstances(categoryOrigin.isSelfGeneratingInstances());
-		categoryTarget.setShortid(categoryOrigin.getShortid());
-		pce.updateEntity(categoryTarget);
+	private void updateCategory(PointsCategory categoryJson,
+			PointsCategory categoryDb, PointsCategoryExposed pce) {
+		categoryDb.setAreCompositeCodes(categoryJson.areCompositeCodes());
+		categoryDb.setCodeLength(categoryJson.getCodeLength());
+		categoryDb.setCompositeCodePossitions(categoryJson.getCompositeCodePossitions());
+		categoryDb.setDescription(categoryJson.getDescription());
+		categoryDb.setMaxInstacesPerPerson(categoryJson.getMaxInstacesPerPerson());
+		categoryDb.setMaxNumberOfInstances(categoryJson.getMaxNumberOfInstances());
+		categoryDb.setName(categoryJson.getName());
+		categoryDb.setPlayerPositionAbove(categoryJson.getPlayerPositionAbove());
+		categoryDb.setPoints(categoryJson.getPoints());
+		categoryDb.setRank(categoryJson.getRank());
+		categoryDb.setRequiresPlayerLevel(categoryJson.getRequiresPlayerLevel());
+		categoryDb.setReusable(categoryJson.isReusable());
+		categoryDb.setSelfGeneratingInstances(categoryJson.isSelfGeneratingInstances());
+		categoryDb.setShortid(categoryJson.getShortid());
+		pce.updateEntity(categoryDb);
 	}
 
 	private void initSecretWords() {
@@ -284,6 +330,25 @@ public class InitDatabase extends HttpServlet {
 				pc.setPoints(10);
 				pce.createEntity(pc);
 			}
+		}
+	}
+	
+	private void initQuestions(HttpServletRequest request, boolean merge){
+		Gson g = new Gson();
+		final BufferedReader readerQuestions = new BufferedReader(new InputStreamReader(request.getServletContext()
+				.getResourceAsStream(QUESTIONS_JSON_LOCATION)));
+
+		List<Question> questions = g.fromJson(readerQuestions, new TypeToken<List<Question>>(){}.getType());
+		QuestionExposed qe = new QuestionExposed();
+		for (Question question : questions) {
+			if(merge){
+				Question q = qe.findQuestionById(question.getId());
+				if(q != null){
+					qe.updateEntity(q);
+					continue;
+				} 
+			}
+			qe.createEntity(question);
 		}
 	}
 }

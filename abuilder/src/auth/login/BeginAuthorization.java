@@ -55,6 +55,10 @@ public class BeginAuthorization extends HttpServlet {
 			if(providerName.equals(Utils.TWITTER)){
 				authorizeWithTwitter(request, response);
 			} else {
+				Twitter twitter = (Twitter) request.getSession().getAttribute(Utils.TWITTER);
+				if(twitter != null){
+					request.getSession().setAttribute(Utils.TWITTER, null);
+				}
 				authorize(initOAuthParams(providerName, request), request, response);	
 			}
 			

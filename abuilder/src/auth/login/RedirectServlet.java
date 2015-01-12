@@ -85,16 +85,23 @@ public class RedirectServlet extends HttpServlet {
 		} else {
 			Twitter twitter = (Twitter) request.getSession().getAttribute(Utils.TWITTER);
 			String provider = null;
-			if(twitter != null && request.getHeader("referer") != null && request.getHeader("referer").contains("twitter")){
+			if(twitter != null){
 				provider = Utils.TWITTER;
 				RequestToken requestToken = (RequestToken) request.getSession().getAttribute("requestToken");
 				String verifier = request.getParameter("oauth_verifier");
-				try {
-					AccessToken authAccessToken = twitter.getOAuthAccessToken(requestToken, verifier);
-					request.getSession().removeAttribute("requestToken");
-					user = initOrCreateUserTwitter(request, response, twitter, authAccessToken);
-				} catch (TwitterException e) {
-					throw new ServletException(e);
+				if(verifier == null){
+					(new Logout()).performLocalInfoRemove(request, response);
+					response.sendRedirect("/");
+				} else {
+					try {
+						AccessToken authAccessToken = twitter.getOAuthAccessToken(requestToken, verifier);
+						request.getSession().removeAttribute("requestToken");
+						user = initOrCreateUserTwitter(request, response, twitter, authAccessToken);
+					} catch (TwitterException e) {
+						(new Logout()).performLocalInfoRemove(request, response);
+						response.sendRedirect("/");
+						//					throw new ServletException(e);
+					}
 				}
 			} else{
 				OAuthParams oauthParams = new OAuthParams();
@@ -138,9 +145,13 @@ public class RedirectServlet extends HttpServlet {
 					sb.append("Error uri: ").append(e.getUri()).append("</br>");
 					sb.append("State: ").append(e.getState()).append("</br>");
 					oauthParams.setErrorMessage(sb.toString());
-					throw new ServletException(sb.toString(), e);
+//					throw new ServletException(sb.toString(), e);
+					e.printStackTrace();
+					response.sendRedirect("/");
 				} catch (OAuthSystemException e) {
-					throw new ServletException(e);
+					e.printStackTrace();
+					response.sendRedirect("/");
+//					throw new ServletException(e);
 				}
 			}
 			createLoginCookie(response, provider);
@@ -201,7 +212,7 @@ public class RedirectServlet extends HttpServlet {
 			} else if (Utils.GOOGLE.equalsIgnoreCase(app)){
 				cl = OpenIdConnectResponse.class;
 			}
-			initCACerts(app, req);
+//			initCACerts(app, req);
 			oauthResponse = client.accessToken(request, cl);
 
 			oauthParams.setAccessToken(oauthResponse.getAccessToken());
@@ -312,7 +323,10 @@ public class RedirectServlet extends HttpServlet {
 			UserInfoJson userInfoJson = null;
 			if(userInfoString != null && userInfoString.length() > 0){
 				if(oauthParams.getApplication().equalsIgnoreCase(Utils.GOOGLE)){
-					userInfoJson = g.fromJson(userInfoString, UserInfoJson.class);	
+					userInfoJson = g.fromJson(userInfoString, UserInfoJson.class);
+//					if(userInfoJson.getEmail() == null && userInfoJson.getId() != null){
+//						userInfoJson.setEmail(userInfoJson.getId());
+//					}
 				} else if(oauthParams.getApplication().equalsIgnoreCase(Utils.LINKEDIN)){
 					userInfoJson = assembleUserInfo(g, userInfoString, userEmail);
 				} else if(oauthParams.getApplication().equalsIgnoreCase(Utils.FACEBOOK)){
@@ -320,6 +334,11 @@ public class RedirectServlet extends HttpServlet {
 				}
 			}
 			userInfoJson.setAccessToken(oauthParams.getAccessToken());
+			if(userInfoJson.getEmail()== null){
+				if(request.getHeader("email") != null && !request.getHeader("email").equals("dimitar.giormov@gmail.com")){
+					userInfoJson.setEmail(request.getHeader("email"));	
+				}
+			}
 			findPersonByOpenId = lue.createNewUser(oauthParams.getApplication(), userInfoJson);
 		}
 		if(fromJson != null){

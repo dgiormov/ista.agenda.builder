@@ -142,4 +142,54 @@
     <servlet-name>Codes</servlet-name>
     <url-pattern>/admin/points/codes</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>Users</display-name>
+    <servlet-name>Users</servlet-name>
+    <servlet-class>admin.Users</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Users</servlet-name>
+    <url-pattern>/admin/users</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>RequestPowerUser</display-name>
+    <servlet-name>RequestPowerUser</servlet-name>
+    <servlet-class>gray.area.RequestPowerUser</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RequestPowerUser</servlet-name>
+    <url-pattern>/request/power</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ManageUsers</display-name>
+    <servlet-name>ManageUsers</servlet-name>
+    <servlet-class>admin.ManageUsers</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ManageUsers</servlet-name>
+    <url-pattern>/users/manage</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>DeleteComments</display-name>
+    <servlet-name>DeleteComments</servlet-name>
+    <servlet-class>admin.DeleteComments</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DeleteComments</servlet-name>
+    <url-pattern>/admin/comments/delete</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>GetFeedback</display-name>
+    <servlet-name>GetFeedback</servlet-name>
+    <servlet-class>admin.GetFeedback</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetFeedback</servlet-name>
+    <url-pattern>/admin/feedback</url-pattern>
+  </servlet-mapping>
 </web-app>

@@ -61,7 +61,7 @@ public class CommentsResource {
 	public Response placeComment(@Context HttpServletRequest request, @PathParam("id") String sessionId) throws IOException{
 		Gson g = new Gson();
 		if (!AppControl.writeMode(request)) {
-			return Response.status(405).entity(g.toJson(new utils.Status(STATE.ERROR, "Comments will be ebabled a few days be. "))).build();
+			return Response.status(405).entity(g.toJson(new utils.Status(STATE.ERROR, "Comments will be enabled in a few days. "))).build();
 		}
 		String inReplyOf = request.getParameter("inReplyOf");;
 		StringWriter writer = new StringWriter();
@@ -76,7 +76,7 @@ public class CommentsResource {
 		//		if(request.getUserPrincipal() == null){
 		//			return Response.status(Status.BAD_REQUEST).build();
 		//		}
-		if(session == null || person == null){
+		if(session == null || person == null || fromJson.data.trim().length() == 0){
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		CommentsExposedBasic ce = new CommentsExposedBasic();
@@ -108,7 +108,7 @@ public class CommentsResource {
 			Comment comment = ce.getComment(commentId);
 			if(comment != null){
 				if(comment.getCowner().getId() == p.getId()){
-					//FIXME do not allow it.
+					return Response.status(Status.NOT_ACCEPTABLE).entity(g.toJson(new utils.Status(STATE.ERROR, "This is your comment remember?"))).build();
 				} 
 				if(p.getLikedComments().contains(comment)){
 					return Response.status(400).build();
@@ -120,13 +120,14 @@ public class CommentsResource {
 					p.getLikedComments().add(comment);
 					if(!comment.getLikedBy().contains(p)){
 						comment.getLikedBy().add(p);
+						p.updateLikes(comment);
 					}
 				}
 				pe.updateEntity(p);
 				ce.updateEntity(comment);
 				LoggedUser cowner = pe.findPersonById(comment.getCowner().getId());
-				ExecuteAction.getInstance().execute("liked", cowner, null);
-				if(comment.getLikes() >= 5){
+				cowner.updateLiked(comment);
+				if(comment.getLikes() >= 10){
 					cowner.updateLiked5Points(comment);	
 				}
 

@@ -34,7 +34,7 @@
 },
 {
 "shortid": "comment",
-"name": "User has commented",
+"name": "User has posted a comment",
 "description": "User has commented on sessions, sadly this does not give points.",
 "maxInstacesPerPerson": 1,
 "selfGeneratingInstances": true,
@@ -45,24 +45,34 @@
 },
 {
 "shortid": "liked5",
-"name": "Good comment",
+"name": "Received 10+ likes on single comment",
 "description": "Points are given when a comment submitted by the user is liked by a number of people",
 "maxInstacesPerPerson": -1,
 "selfGeneratingInstances": true,
 "maxNumberOfInstances": -1,
 "areCompositeCodes": false,
-"points": 50,
+"points": 2,
 "rank": 3
 },
 {
 "shortid": "liked",
-"name": "Good comment single",
+"name": "Received like",
 "description": "Points are given when a comment submitted by the user is liked by a number of people",
 "maxInstacesPerPerson": -1,
 "selfGeneratingInstances": true,
 "maxNumberOfInstances": -1,
 "areCompositeCodes": false,
-"points": 10
+"points": 1
+},
+{
+"shortid": "like",
+"name": "Liked a comment",
+"description": "2 Points are given to the person liked the comment 10 to the author.",
+"maxInstacesPerPerson": -1,
+"selfGeneratingInstances": true,
+"maxNumberOfInstances": -1,
+"areCompositeCodes": false,
+"points": 0
 },
 {
 "shortid": "ratesession",
@@ -72,7 +82,7 @@
 "selfGeneratingInstances": true,
 "maxNumberOfInstances": -1,
 "areCompositeCodes": false,
-"points": 25,
+"points": 12,
 "rank": 2
 },
 {
@@ -83,23 +93,44 @@
 "selfGeneratingInstances": true,
 "maxNumberOfInstances": -1,
 "areCompositeCodes": false,
-"points": 25,
+"points": 12,
 "rank": 2
 },
 {
 "shortid": "fillupsurvey",
-"name": "Fill event survey",
+"name": "Provided feedback - Submitted",
 "description": "User has given feedback for the conference",
 "maxInstacesPerPerson": 1,
 "selfGeneratingInstances": true,
 "maxNumberOfInstances": -1,
 "areCompositeCodes": false,
-"points": 100	,
+"points": 30,
 "rank": 3
+},
+
+{
+"shortid": "surveybonus1",
+"name": "Feedback bonus - A man of a few words",
+"description": "User has given feedback for the conference",
+"maxInstacesPerPerson": 1,
+"selfGeneratingInstances": true,
+"maxNumberOfInstances": -1,
+"areCompositeCodes": false,
+"points": 50
+},
+{
+"shortid": "surveybonus2",
+"name": "Feedback bonus - Blog content detected",
+"description": "User has given feedback for the conference",
+"maxInstacesPerPerson": 1,
+"selfGeneratingInstances": true,
+"maxNumberOfInstances": -1,
+"areCompositeCodes": false,
+"points": 20
 },
 {
 "shortid": "top100",
-"name": "Player is in top 100",
+"name": "Reached top 100!",
 "description": "Player has achieved top 100 position",
 "maxInstacesPerPerson": 1,
 "selfGeneratingInstances": true,
@@ -111,8 +142,8 @@
 },
 {
 "shortid": "rank1",
-"name": "Rank User",
-"description": "Player has reached rank \"User\"",
+"name": "Reached rank Silver User bonus",
+"description": "Player has reached rank \"Silver User\"",
 "maxInstacesPerPerson": 1,
 "selfGeneratingInstances": true,
 "maxNumberOfInstances": -1,
@@ -122,7 +153,7 @@
 },
 {
 "shortid": "rank2",
-"name": "Rank Gold User",
+"name": "Reached rank Gold User bonus",
 "description": "Player has reached rank \"Gold User\"",
 "maxInstacesPerPerson": 1,
 "selfGeneratingInstances": true,
@@ -132,17 +163,17 @@
 },
 {
 "shortid": "rank3",
-"name": "Rank Diamond User",
-"description": "Player has reached rank \"Diamond User\"",
+"name": "Reached rank Platinum User bonus",
+"description": "Player has reached rank \"Platinum User\"",
 "maxInstacesPerPerson": 1,
 "selfGeneratingInstances": true,
 "maxNumberOfInstances": -1,
 "areCompositeCodes": false,
-"points": 250
+"points": 150
 },
 {
 "shortid": "charity",
-"name": "Entered Code",
+"name": "Challenge Code",
 "description": "Points are provided for various activities, which are awarded with code card.",
 "maxInstacesPerPerson": 1,
 "codeLength": 4,
@@ -153,15 +184,25 @@
 },
 {
 "shortid": "tshirt",
-"name": "Entered Code",
+"name": "Bought T-Shirt",
 "description": "Points are provided for various activities, which are awarded with code card.",
-"maxInstacesPerPerson": 50,
+"maxInstacesPerPerson": 10,
 "codeLength": 4,
 "selfGeneratingInstances": false,
-"maxNumberOfInstances": 50,
+"maxNumberOfInstances": 400,
 "areCompositeCodes": false,
 "points": 150,
 "rank": 3,
 "nextCodeFactor": 10
+},
+{
+"shortid": "hacker",
+"name": "Wanna be hacker",
+"description": "User has tried to enter too many codes",
+"maxInstacesPerPerson": 1,
+"selfGeneratingInstances": true,
+"maxNumberOfInstances": -1,
+"areCompositeCodes": false,
+"points": 20
 }
 ]

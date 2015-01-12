@@ -8,6 +8,7 @@ public class PointsInstanceJson {
 	private String description;
 	private int points;
 	private String shortid;
+	private String count;
 
 	public PointsInstanceJson(PointsInstance pointsInstance) {
 		name = pointsInstance.getCategory().getName();

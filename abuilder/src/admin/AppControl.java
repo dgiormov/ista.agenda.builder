@@ -52,9 +52,6 @@ public class AppControl extends HttpServlet {
 	}
 
 	public static boolean writeMode(HttpServletRequest request){
-		if(!Utils.isProductiveApplication(request)){
-			return true;
-		}
 		EnabledFuncExposed ee = new EnabledFuncExposed();
 		EnabledFunctionality entity = ee.getEntity();
 		if(entity != null && entity.getUserName() != null){

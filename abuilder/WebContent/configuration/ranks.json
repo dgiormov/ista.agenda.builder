@@ -1,12 +1,12 @@
 [
 {
 "rankPos": 3,
-"rankName": "Diamond",
+"rankName": "Diamond User",
 "rankRequirements":["login","prepare", "share", "comment", "ratesession", "ratespeaker", "top100", "fillupsurvey", "liked5", "tshirt"]
 },
 {
 "rankPos": 2,
-"rankName": "Gold",
+"rankName": "Gold User",
 "rankRequirements":["login","prepare", "share", "comment", "ratesession", "ratespeaker", "top100"],
 "rankRequirementsAlt":["attended2days"]
 },

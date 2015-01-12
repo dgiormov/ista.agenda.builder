@@ -1,6 +1,7 @@
 package persistency.entities.gamification;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
@@ -57,7 +58,7 @@ public class PointsCategory implements Serializable {
 	
 	private int nextCodeFactor = 1;
 	
-	@OneToMany
+	@OneToMany(cascade=CascadeType.REMOVE)
 	private List<PointsInstance> instancesOfThisType;
 
 	public int getId() {
@@ -222,5 +223,13 @@ public class PointsCategory implements Serializable {
 
 	public void setNextCodeFactor(int nextCodeFactor) {
 		this.nextCodeFactor = nextCodeFactor;
+	}
+
+	public void addInstances(List<PointsInstance> pi) {
+		if(instancesOfThisType == null){
+			instancesOfThisType = new ArrayList<PointsInstance>();
+		}
+		instancesOfThisType.addAll(pi);
+		
 	}
 }

@@ -16,7 +16,7 @@ public class TimeStopper {
 	public static long timeToSessionAndHalf(Session session) {
 		Date date = session.getDate();
 		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("EET"));
-//		calendar.setTime(date);
+		calendar.setTime(date);
 		calendar.set(Calendar.HOUR_OF_DAY, session.getStartTime()/100);
 		calendar.set(Calendar.MINUTE, session.getStartTime()%100);
 		calendar.add(Calendar.MINUTE, session.getDuration()/2);

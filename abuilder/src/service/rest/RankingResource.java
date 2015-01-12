@@ -6,6 +6,7 @@ import gamification.Player;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,9 +20,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import persistency.entities.LoggedUser;
+import persistency.entities.gamification.PointsCategory;
 import persistency.entities.gamification.PointsInstance;
 import persistency.exposed.LoggedUserExposed;
+import service.rest.wrappers.PlayerDetailsHelper;
 import service.rest.wrappers.PointsInstanceJson;
+import service.rest.wrappers.UserPointsCategoryJson;
 import utils.PointsHelper;
 import utils.RankingHelper;
 
@@ -77,6 +81,36 @@ public class RankingResource {
 		int pid = Integer.parseInt(id);
 		pid = pid -42;
 		LoggedUser personById = pe.findPersonById(pid);
+		List<PointsInstance> pointsInstances = personById.getPointsInstances();
+		Map<PointsCategory, Integer> map  = new HashMap<PointsCategory, Integer>();
+		for (PointsInstance pointsInstance : pointsInstances) {
+			Integer integer = map.get(pointsInstance.getCategory());
+			if(integer != null){
+				map.put(pointsInstance.getCategory(), integer+1);
+			} else {
+				map.put(pointsInstance.getCategory(), 1);
+			}
+		}
+		List<UserPointsCategoryJson> result = new ArrayList<UserPointsCategoryJson>();
+		for (PointsCategory instance : map.keySet()) {
+			if(instance.getPoints() > 0){
+				result.add(new UserPointsCategoryJson(instance, map.get(instance)));
+			}
+		}
+		
+		Collections.sort(result);
+		
+		return Response.status(Response.Status.OK)
+				.entity(g.toJson(new PlayerDetailsHelper(personById.getName(), result, personById.getPoints()))).build();
+	}
+	
+	@GET
+	@Path("{id}/detailed")
+	public Response extractPlayerDataDetailed(@PathParam("id") String id) throws Exception {
+		LoggedUserExposed pe = new LoggedUserExposed();
+		int pid = Integer.parseInt(id);
+		pid = pid -42;
+		LoggedUser personById = pe.findPersonById(pid);
 		List<PointsInstanceJson> playerStats = toJsonObjects(personById.getPointsInstances());
 		return Response.status(Response.Status.OK)
 				.entity(g.toJson(playerStats)).build();
@@ -86,10 +120,10 @@ public class RankingResource {
 			List<PointsInstance> pointsInstances) {
 		List<PointsInstanceJson> result = new ArrayList<PointsInstanceJson>();
 		for (PointsInstance pointsInstance : pointsInstances) {
-			result.add(new PointsInstanceJson(pointsInstance));
+			if(pointsInstance.getCategory().getPoints() > 0){
+				result.add(new PointsInstanceJson(pointsInstance));	
+			}
 		}
-		
-		
 		return result;
 	}
 

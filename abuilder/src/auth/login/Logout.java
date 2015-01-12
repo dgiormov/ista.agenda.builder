@@ -24,11 +24,20 @@ public class Logout extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		LoggedUserExposed lue = new LoggedUserExposed();
 		LoggedUser currentUser = lue.getCurrentUser(request);
+		if(currentUser == null){
+			response.sendRedirect("/");
+		}
 		currentUser.setSessionExpires(0);
 		lue.updateEntity(currentUser);
-		request.getSession().removeAttribute(Utils.ACCESS_TOKEN_SESSION_KEY);
-		LoginUtils.invalidateCookie(request);
+		performLocalInfoRemove(request, response);
 		response.sendRedirect("/");
+	}
+
+	public void performLocalInfoRemove(HttpServletRequest request,
+			HttpServletResponse response) {
+		request.getSession().removeAttribute(Utils.ACCESS_TOKEN_SESSION_KEY);
+		request.getSession().setAttribute(Utils.TWITTER, null);
+		LoginUtils.invalidateCookie(request, response);
 	}
 
 }

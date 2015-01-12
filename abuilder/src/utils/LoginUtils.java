@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class LoginUtils {
 
-	public static void invalidateCookie(HttpServletRequest request) {
+	public static void invalidateCookie(HttpServletRequest request, HttpServletResponse response) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies == null || cookies.length == 0) {
 
@@ -14,6 +14,7 @@ public class LoginUtils {
 			for (Cookie cookie : cookies) {
 				if (Constants.COOKIE_PROVIDER_KEY.equals(cookie.getName())) {
 					cookie.setMaxAge(0);
+					response.addCookie(cookie);
 				}
 			}
 		}

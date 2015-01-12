@@ -85,18 +85,18 @@ public class SessionResource {
 		builder.entity(calendar.toString());
 		return builder.build();
 	}
-
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response createOrUpdate(String content) {
-		System.out.println(content);
-		SessionExposedBasic sessionDao = new SessionExposedBasic();
-		Session e = g.fromJson(content, Session.class);
-		sessionDao.createEntity(e);
-		return Response
-				.status(Response.Status.BAD_REQUEST)
-				.entity("System DB Configuration API cannot create configurations with this name.").type("text/plain").build(); //$NON-NLS-1$ //$NON-NLS-2$
-	}
+//
+//	@POST
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	public Response createOrUpdate(String content) {
+//		System.out.println(content);
+//		SessionExposedBasic sessionDao = new SessionExposedBasic();
+//		Session e = g.fromJson(content, Session.class);
+//		sessionDao.createEntity(e);
+//		return Response
+//				.status(Response.Status.BAD_REQUEST)
+//				.entity("System DB Configuration API cannot create configurations with this name.").type("text/plain").build(); //$NON-NLS-1$ //$NON-NLS-2$
+//	}
 	
 	
 }

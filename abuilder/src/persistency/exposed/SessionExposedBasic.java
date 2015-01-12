@@ -2,6 +2,7 @@ package persistency.exposed;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,6 +60,14 @@ public class SessionExposedBasic {
 		List<SessionBasic> entriesOnDate = new ArrayList<SessionBasic>();
 		for (SessionBasic sessionBasic : allEntities) {
 			if(sessionBasic.getDate().startsWith(date+".")){
+				List<String> speakers = sessionBasic.getSpeakers();
+				if(speakers.size() > 1){
+					for (int i = 0; i < speakers.size(); i++) {
+						if(i+1<speakers.size()){
+							speakers.set(i, speakers.get(i)+",");
+						}
+					}
+				}
 				entriesOnDate.add(sessionBasic);
 			}
 		}
@@ -168,7 +177,7 @@ public class SessionExposedBasic {
 		} finally {
 			transaction.commit();
 		}
-		return new SessionWrapped(result, p);
+		return result == null ? null : new SessionWrapped(result, p);
 	}
 
 	public void incSessionViews(Session e) {

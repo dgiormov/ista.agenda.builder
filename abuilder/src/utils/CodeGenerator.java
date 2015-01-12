@@ -12,7 +12,8 @@ public class CodeGenerator {
 	public static List<PointsInstance> generateCodes(int max, List<PointsInstance> allCodes, PointsCategory category) {
 		int codeLength = category.getCodeLength();
 		List<PointsInstance> newCodes = new ArrayList<PointsInstance>();
-		for (int i = 0; i < max; i++) {
+		int cSize = category.getInstancesOfThisType() == null ? 0 : category.getInstancesOfThisType().size();
+		for (int i = cSize; i < max; i++) {
 			PointsInstance pi = generateCode(codeLength);
 			while(allCodes.contains(pi) || newCodes.contains(pi)){
 				pi = generateCode(codeLength);

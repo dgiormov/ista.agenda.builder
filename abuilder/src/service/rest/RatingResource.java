@@ -1,6 +1,10 @@
 package service.rest;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -19,6 +23,7 @@ import persistency.exposed.LoggedUserExposed;
 import persistency.exposed.SessionExposedBasic;
 import utils.Status.STATE;
 import utils.TimeStopper;
+import admin.AppControl;
 
 import com.google.gson.Gson;
 
@@ -27,7 +32,8 @@ import com.google.gson.Gson;
 public class RatingResource {
 
 	
-	private static final float RATE_LIMIT = 10;
+	private static final float RATE_LIMIT_DAY1 = 3;
+	private static final float RATE_LIMIT_DAY2 = 10;
 	
 	@POST
 	@Path("/session")
@@ -55,6 +61,9 @@ public class RatingResource {
 	
 	private Response rateGeneric(HttpServletRequest request, LoggedUser person, String rating, String sessionId, Map<Integer, Integer> ratings){
 
+		if(!AppControl.writeMode(request)){
+			return Response.status(Status.PRECONDITION_FAILED).entity((new Gson()).toJson(new utils.Status(STATE.ERROR, "Rating is currently disabled."))).build();
+		}
 		if (sessionId == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
@@ -73,10 +82,12 @@ public class RatingResource {
 		long timeToSessionAndHalf = TimeStopper.timeToSessionAndHalf(session);
 		if(timeToSessionAndHalf < 0){
 			timeToSessionAndHalf = timeToSessionAndHalf*(-1);
-			return Response.status(Status.PRECONDITION_FAILED).entity((new Gson()).toJson(new utils.Status(STATE.ERROR, "You can only rate during or after the session. Time left: "+timeToSessionAndHalf+" min"))).build();
+			return Response.status(Status.PRECONDITION_FAILED).entity((new Gson()).toJson(new utils.Status(STATE.ERROR, "You can only rate after the session. Come back in: "+timeToSessionAndHalf+" min"))).build();
 		}
-		if (checkForConflictingTalks(ratings, session, ee)) {
-			return Response.status(Status.NOT_ACCEPTABLE).entity("It is quite impossible for you to have attended all these sessions.").build();
+		utils.Status canRate = canRate(person, session);
+		if (canRate.severity != STATE.OK) {
+			Gson g = new Gson();
+			return Response.status(Status.NOT_ACCEPTABLE).entity(g.toJson(canRate)).build();
 		}
 		boolean isContained = ratings.containsKey(session.getId());
 		if(bin0 == 0){
@@ -93,11 +104,51 @@ public class RatingResource {
 		return Response.status(Status.OK).build();
 	}
 	
-	private boolean checkForConflictingTalks(Map<Integer, Integer> ratings,
-			Session session, SessionExposedBasic ee) {
-		return ratings.get(session.getId()) == null && ratings.size() >= RATE_LIMIT;
+	private utils.Status canRate(LoggedUser user, Session session) {
+		List<Session> forDay = getUniqueSessionRatedForDay(user, session.getDate());
+		if(session.getDate().getDate() == 26){
+			if(forDay.size() < RATE_LIMIT_DAY1) {
+				return new utils.Status(STATE.OK, 0);
+			} else if(forDay.size() == RATE_LIMIT_DAY1) {
+				if(forDay.contains(session)){
+					return new utils.Status(STATE.OK, 0);
+				}
+			}
+		} else {
+			if(forDay.size() < RATE_LIMIT_DAY2) {
+				return new utils.Status(STATE.OK, 0);
+			} else if(forDay.size() == RATE_LIMIT_DAY2) {
+				if(forDay.contains(session)){
+					return new utils.Status(STATE.OK, 0);
+				}
+			}
+		}
+		return new utils.Status(STATE.ERROR, "You cannot rate more sessions for this day.");
 	}
 	
+	private List<Session> getUniqueSessionRatedForDay(LoggedUser user, Date date) {
+		List<Session> result = new ArrayList<Session>();
+		comupteSessionsOnDate(date, user.getSessionRatings(), result);
+		comupteSessionsOnDate(date, user.getSpeakerRatings(), result);
+		return result;
+	}
+
+	private void comupteSessionsOnDate(Date date, Map<Integer, Integer> ratings,
+			List<Session> result) {
+		Set<Integer> keySet = ratings.keySet();
+		SessionExposedBasic se = new SessionExposedBasic();
+		
+		for (Integer integer : keySet) {
+			Session sessionById = se.findSessionById(integer+"");
+			if(sessionById.getDate().getDate() == date.getDate()){
+				if(!result.contains(sessionById)){
+					result.add(sessionById);
+				}
+			}
+		}
+	}
+	
+
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/speaker")
@@ -123,7 +174,6 @@ public class RatingResource {
 	}
 	
 	private Response getRating(@Context HttpServletRequest request, Map<Integer, Integer> ratings) {
-		
 		String sessionId = request.getParameter("id");
 		if (sessionId == null) {
 			return Response.status(Status.BAD_REQUEST).build();

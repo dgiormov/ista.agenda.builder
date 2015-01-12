@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
 
 /**
@@ -12,6 +14,9 @@ import javax.persistence.Transient;
  *
  */
 @Entity
+@NamedQueries({
+	@NamedQuery(name = "getRankById", query = "SELECT e FROM Rank e WHERE e.rankPos = :id"),
+	@NamedQuery(name = "allRanks", query = "SELECT e FROM Rank e")})
 public class Rank implements Serializable {
 
 	

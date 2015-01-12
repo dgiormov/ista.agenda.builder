@@ -12,6 +12,8 @@
 		<class>persistency.entities.gamification.Rank</class>
 		<class>persistency.entities.feedback.Question</class>
 		<class>persistency.entities.feedback.Answer</class>
+		<class>persistency.entities.admin.PowerUser</class>
+		<class>persistency.entities.admin.RequestPower</class>
 		<properties>
 			<property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
 		</properties>

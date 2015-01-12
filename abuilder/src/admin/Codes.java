@@ -29,8 +29,27 @@ public class Codes extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PointsExposed pe = new PointsExposed();
 		List<PointsInstance> allCodes = pe.allCodes();
+		List<PointsInstance> result = new ArrayList<PointsInstance>();
+		String categoryStr = request.getParameter("category");
+		boolean nl = request.getParameter("nl") != null;
+		
+		if(categoryStr != null){
+			for (PointsInstance pointsInstance : allCodes) {
+				if(pointsInstance.getCategory().getShortid().equals(categoryStr)){
+					result.add(pointsInstance);
+				}
+			}
+		} else {
+			result.addAll(allCodes);
+		}
 		Gson g = new Gson();
-		response.getWriter().print(g.toJson(toJsonObject(allCodes)));
+		if(nl){
+			for (PointsInstance pointsInstance : result) {
+				response.getWriter().println(pointsInstance.getCode());
+			}
+		} else {
+			response.getWriter().print(g.toJson(toJsonObject(result)));
+		}
 	}
 
 	private List<PointsInstanceJson> toJsonObject(List<PointsInstance> allCodes) {

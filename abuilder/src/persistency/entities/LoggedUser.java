@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,7 +24,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.Index;
+import org.eclipse.persistence.jpa.config.Cascade;
 
 import persistency.entities.gamification.PointsCategory;
 import persistency.entities.gamification.PointsInstance;
@@ -48,12 +51,12 @@ import utils.Status.STATE;
 public class LoggedUser implements Serializable {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue
 	private long id;
 	
 	private String name;
 
-	@Index(unique=true)
+//	@Index(unique=true)
 	private String email;
 	
 	@Index(unique=true)
@@ -85,7 +88,7 @@ public class LoggedUser implements Serializable {
 	@ManyToMany(mappedBy="likedBy")
 	private List<Comment> likedComments = new ArrayList<Comment>();
 	
-	@OneToMany(mappedBy="cowner")
+	@OneToMany(mappedBy="cowner", cascade=CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<Comment>();
 	
 	@ElementCollection
@@ -295,7 +298,7 @@ public class LoggedUser implements Serializable {
 		List<PointsInstance> instances = getPointsInstances();
 		if(instances != null){
 			for (PointsInstance pointsInstance : instances) {
-				if(pointsInstance.getCategory().getId() == pointsCategory.getId()){
+				if(pointsInstance.getCategory() != null && pointsInstance.getCategory().getId() == pointsCategory.getId()){
 					result.add(pointsInstance);
 				}
 			}
@@ -336,25 +339,116 @@ public class LoggedUser implements Serializable {
 		}
 	}
 	
-	public void updateLiked5Points(Comment comment) {
-		String commentId = comment.getId()+"";
-		String who = "Liked5 on comment: ";
-		
+	public void updateLikesPoints(Map<Integer, Integer> ratings, Session session, boolean add) {
+		String shortCode = "ratesession";
+		String who = "Rated Session: ";
+		if(ratings == getSpeakerRatings()){
+			shortCode = "ratespeaker";
+			who = "Rated Speaker(s): ";
+		}
 		PointsCategoryExposed pce = new PointsCategoryExposed();
-		PointsCategory category = pce.findCategoryByShortName("liked5");
+		PointsCategory category = pce.findCategoryByShortName(shortCode);
 		List<PointsInstance> allPointsOfAType = findAllPointsOfAType(category);
 		PointsInstance p = null;
-		String pointsDescription = who+commentId;
+		String pointsDescription = who+session.getName();
 		for (PointsInstance pointsInstance : allPointsOfAType) {
 			if(pointsInstance.getDescription().equals(pointsDescription)){
 				p = pointsInstance;
 				break;
 			}
 		}
+		
+		if(add){
+			if(p == null){
+				PointsInstance instance = category.createPointsInstance(this, pointsDescription);
+				getPointsInstances().add(instance);
+			}
+		} else {
+			if(p!=null){
+				PointsExposed pe = new PointsExposed();
+				pe.deleteEntity(p);
+				getPointsInstances().remove(p);
+			}
+		}
+	}
+	
+	public void updateLiked(Comment comment){
+		String key = "liked";
+		String commentId = comment.getId()+"";
+		String who = key+" on comment: ";
+		String pointsDescription = who+commentId;
+		PointsCategoryExposed pce = new PointsCategoryExposed();
+		PointsCategory category = pce.findCategoryByShortName(key);
 
-		if(p == null){
+		List<PointsInstance> allPointsWithDescription = findAllPointsWithDescription(category, pointsDescription);
+		for(int i=allPointsWithDescription.size(); i<comment.getLikes(); i++){
 			PointsInstance instance = category.createPointsInstance(this, pointsDescription);
 			getPointsInstances().add(instance);
 		}
+	}
+	
+	public void updateLikes(Comment comment){
+		String key = "like";
+		String commentId = comment.getId()+"";
+		String who = key+" on comment: ";
+		String pointsDescription = who+commentId;
+		PointsCategoryExposed pce = new PointsCategoryExposed();
+		PointsCategory category = pce.findCategoryByShortName(key);
+		List<PointsInstance> findAllPointsOfAType = findAllPointsOfAType(category);
+		for (PointsInstance pointsInstance : findAllPointsOfAType) {
+			if(pointsInstance.getDescription() == null || pointsInstance.getDescription().length() == 0){
+				getPointsInstances().remove(pointsInstance);
+				category.getInstancesOfThisType().remove(pointsInstance);
+			}
+		}
+		pce.updateEntity(category);
+		List<PointsInstance> allPointsWithDescription = findAllPointsWithDescription(category, pointsDescription);
+		if(allPointsWithDescription == null || allPointsWithDescription.size() == 0){
+			PointsInstance instance = category.createPointsInstance(this, pointsDescription);
+			getPointsInstances().add(instance);
+		}
+	}
+	
+	public List<PointsInstance> findAllPointsWithDescription(PointsCategory pointsCategory, String pointsDescription){
+		List<PointsInstance> allPointsOfAType = findAllPointsOfAType(pointsCategory);
+		PointsInstance p = null;
+		List<PointsInstance> result = new ArrayList<PointsInstance>();
+		for (PointsInstance pointsInstance : allPointsOfAType) {
+			if(pointsInstance.getDescription()!= null && pointsDescription!= null && pointsInstance.getDescription().equals(pointsDescription)){
+				result.add(pointsInstance);
+			}
+		}
+		return result;
+	}
+	
+	public void updateLiked5Points(Comment comment) {
+		String key = "liked5";
+		String commentId = comment.getId()+"";
+		String who = key+" on comment: ";
+		String pointsDescription = who+commentId;
+		PointsCategoryExposed pce = new PointsCategoryExposed();
+		PointsCategory category = pce.findCategoryByShortName(key);
+
+		List<PointsInstance> allPointsWithDescription = findAllPointsWithDescription(category, pointsDescription);
+		if(allPointsWithDescription.size() == 0){
+			PointsInstance instance = category.createPointsInstance(this, pointsDescription);
+			getPointsInstances().add(instance);
+		} else if(allPointsWithDescription.size()>1){
+			PointsExposed pe = new PointsExposed();
+			for(int i=1; i<allPointsWithDescription.size(); i++){
+				pe.deleteEntity(allPointsWithDescription.get(i));
+			}
+		}
+	}
+	
+	public List<PointsCategory> getUniqueCategories() {
+		List<PointsCategory> uniqueCategories = new ArrayList<PointsCategory>();
+		for (PointsInstance pointsInstance : getPointsInstances()) {
+			PointsCategory category = pointsInstance.getCategory();
+			if(!uniqueCategories.contains(category)){
+				uniqueCategories.add(category);
+			}
+		}
+		return uniqueCategories;
 	}
 }

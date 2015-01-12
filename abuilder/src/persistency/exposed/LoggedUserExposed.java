@@ -124,17 +124,26 @@ public class LoggedUserExposed {
 
 	public LoggedUser createNewUser(String application, UserInfoJson userInfo) {
 		LoggedUser lu = new LoggedUser();
+		if(userInfo.getEmail() == null){
+			throw new IllegalArgumentException("failed to find email");
+		}
 		String openId = assebleOpenId(userInfo.getEmail(), application);
 		//Some IDP require additional request to get the email, so we have to absolutely sure that the person is not registered 
 		LoggedUser findPersonByOpenId = findPersonByOpenId(openId);
 		if(findPersonByOpenId != null){
 			findPersonByOpenId.setAccessToken(userInfo.getAccessToken());
 			findPersonByOpenId.setSecretAccess(userInfo.getSecretAccessToken());
+			if(userInfo != null && userInfo.getEmail() != null){
+				lu.setEmail(userInfo.getEmail());	
+			}
 			return findPersonByOpenId;
 		}
 		lu.setOpenId(openId);
 		if(userInfo != null){
 			lu.setName(userInfo.getName());
+			if(userInfo.getEmail() != null){
+				lu.setEmail(userInfo.getEmail());	
+			}
 			lu.setAccessToken(userInfo.getAccessToken());
 			lu.setSecretAccess(userInfo.getSecretAccessToken());
 		}

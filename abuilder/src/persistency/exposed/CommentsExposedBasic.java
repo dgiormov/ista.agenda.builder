@@ -12,7 +12,7 @@ import persistency.entities.LoggedUser;
 import service.rest.wrappers.CommentBasic;
 import utils.DBUtils;
 
-public class CommentsExposedBasic {
+public class CommentsExposedBasic extends AbstractExposed<Comment>{
 
 	public EntityManager entityManager = null;
 
@@ -20,20 +20,6 @@ public class CommentsExposedBasic {
 
 	public CommentsExposedBasic() {
 		entityManager = DBUtils.getEMF().createEntityManager();
-	}
-
-	public void createEntity(Comment e) {
-		EntityTransaction transaction = entityManager.getTransaction();
-		transaction.begin();
-		entityManager.persist(e);
-		transaction.commit();
-	}
-
-	public void updateEntity(Comment e) {
-		EntityTransaction transaction = entityManager.getTransaction();
-		transaction.begin();
-		entityManager.merge(e);
-		transaction.commit();
 	}
 
 	public List<CommentBasic> allEntities(String id, LoggedUser lu) {
@@ -56,6 +42,11 @@ public class CommentsExposedBasic {
 			result.add(new CommentBasic(comment, lu != null && lu.getLikedComments().contains(comment)));
 		}
 		return result;
+	}
+	
+	public List<Comment> allEntities() {
+		Query namedQuery = entityManager.createNamedQuery("allCommentsRaw");
+		return namedQuery.getResultList();
 	}
 
 	public Comment getComment(Integer id) {
