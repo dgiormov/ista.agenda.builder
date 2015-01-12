@@ -335,9 +335,7 @@ public class RedirectServlet extends HttpServlet {
 			}
 			userInfoJson.setAccessToken(oauthParams.getAccessToken());
 			if(userInfoJson.getEmail()== null){
-				if(request.getHeader("email") != null && !request.getHeader("email").equals("dimitar.giormov@gmail.com")){
-					userInfoJson.setEmail(request.getHeader("email"));	
-				}
+				throw new IllegalArgumentException();
 			}
 			findPersonByOpenId = lue.createNewUser(oauthParams.getApplication(), userInfoJson);
 		}
