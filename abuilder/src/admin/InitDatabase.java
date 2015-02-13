@@ -204,9 +204,9 @@ public class InitDatabase extends HttpServlet {
 
 		Gson g = new Gson();
 		final BufferedReader readerSpeakers = new BufferedReader(new InputStreamReader(request.getServletContext()
-				.getResourceAsStream(SPEAKERS_JSON_LOCATION)));
+				.getResourceAsStream(SPEAKERS_JSON_LOCATION),"UTF-8"));
 		final BufferedReader readerSessions = new BufferedReader(new InputStreamReader(request.getServletContext()
-				.getResourceAsStream(SESSIONS_JSON_LOCATION)));
+				.getResourceAsStream(SESSIONS_JSON_LOCATION),"UTF-8"));
 
 		List<Speaker> speakers = g.fromJson(readerSpeakers, new TypeToken<List<Speaker>>(){}.getType());
 		createSpeakers(speakers);
